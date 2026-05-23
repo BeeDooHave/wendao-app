@@ -1,5 +1,5 @@
 /* =================================================================
- * 《问道》修真自律 App · v0.1 (自用版)
+ * 《问道》修真自律 App · v0.2 (自用版)
  * ----------------------------------------------------------------
  * 全部数据保存在 localStorage，不上传任何服务器。
  * ================================================================= */
@@ -23,9 +23,9 @@ const DAO_NAMES_1 = ["玄","清","云","紫","青","白","素","沧","赤","空"
 const DAO_NAMES_2 = ["微","机","虚","渊","霄","羽","尘","川","岚","松","泉","雪","月","风","岳","澜"];
 const DAO_NAMES_3 = ["子","真人","散人","道人","居士","上人","先生","真君"];
 
-// 任务图标
+// 任务图标（内置 SVG，避免不同设备的 emoji 风格漂移）
 const TASK_ICONS = {
-  daily: "🌅", study: "📖", sport: "💪", meditate: "🧘", goal: "🎯", other: "✦"
+  daily: "sunrise", study: "book", sport: "body", meditate: "lotus", goal: "target", other: "spark"
 };
 const CAT_NAMES = {
   daily: "每日打卡", study: "学习", sport: "运动", meditate: "冥想", goal: "长期目标", other: "其他"
@@ -233,7 +233,7 @@ function renderHome() {
     const card = document.createElement("div");
     card.className = "task-card" + (doneToday ? " done" : "");
     card.innerHTML = `
-      <div class="task-icon">${TASK_ICONS[t.cat] || "✦"}</div>
+      <div class="task-icon">${svgIcon(TASK_ICONS[t.cat] || "spark")}</div>
       <div class="task-info">
         <div class="task-name">${escapeHTML(t.name)}${doneToday ? " ✓" : ""}</div>
         <div class="task-meta">${CAT_NAMES[t.cat]} · ${t.duration} 分钟</div>
@@ -259,6 +259,10 @@ function estimateGain(task) {
   return Math.round(task.duration * task.difficulty);
 }
 
+function svgIcon(name, className = "task-symbol") {
+  return `<svg class="${className}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+}
+
 // ============== 修炼大厅 ==============
 function renderTasks() {
   if (!S) return;
@@ -275,7 +279,7 @@ function renderTasks() {
     const diff = diffLabel(t.difficulty);
     card.innerHTML = `
       <div class="hall-card-header">
-        <div class="hall-card-title">${TASK_ICONS[t.cat] || "✦"} ${escapeHTML(t.name)}</div>
+        <div class="hall-card-title"><span class="hall-symbol">${svgIcon(TASK_ICONS[t.cat] || "spark")}</span>${escapeHTML(t.name)}</div>
         <span class="difficulty ${diff.cls}">${diff.txt}</span>
       </div>
       <div class="hall-card-body">${escapeHTML(t.desc || "—")} · ${CAT_NAMES[t.cat]} · 默认 ${t.duration} 分钟${doneToday ? " · 今日已修炼 " + doneToday + " 次" : ""}</div>
@@ -396,7 +400,7 @@ function startMeditate(task) {
   document.getElementById("med-task").textContent = task.name + " · " + task.duration + " 分钟";
   document.getElementById("med-time").textContent = formatTime(task.duration * 60);
   document.getElementById("med-quote").textContent = `"${rand(QUOTES)}"`;
-  document.getElementById("med-toggle").textContent = "⏸";
+  document.getElementById("med-toggle").innerHTML = svgIcon("pause", "ui-icon");
 
   medState = {
     task,
@@ -430,7 +434,9 @@ function updateMedUI() {
   const progress = 1 - medState.leftSec / medState.totalSec;
   const dashOffset = 678.58 * progress;
   document.getElementById("med-ring").setAttribute("stroke-dashoffset", dashOffset);
-  document.getElementById("med-mult").textContent = medState.focused ? "★ 专注 ×1.2" : "心魔扰心 ×0.8";
+  document.getElementById("med-mult").innerHTML = medState.focused
+    ? `${svgIcon("spark", "inline-icon")}专注 ×1.2`
+    : "心魔扰心 ×0.8";
 }
 
 function formatTime(sec) {
@@ -554,7 +560,7 @@ function initMeditate() {
   document.getElementById("med-toggle").onclick = () => {
     if (!medState) return;
     medState.paused = !medState.paused;
-    document.getElementById("med-toggle").textContent = medState.paused ? "▶" : "⏸";
+    document.getElementById("med-toggle").innerHTML = svgIcon(medState.paused ? "play" : "pause", "ui-icon");
   };
   document.getElementById("med-add5").onclick = () => {
     if (!medState) return;

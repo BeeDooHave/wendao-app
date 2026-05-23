@@ -6,19 +6,25 @@
   --gold-light: #E6D5A8;
   --paper: #F4F1EA;
   --paper-warm: #FFFCF4;
+  --surface: rgba(255, 253, 248, 0.94);
+  --surface-deep: #EFE8D8;
   --jade: #5DADE2;
   --fire: #E74C3C;
   --mist: #BDC3C7;
   --gray: #7F8C8D;
   --line: #e0d9c4;
-  --shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+  --line-soft: rgba(201, 169, 110, 0.22);
+  --shadow: 0 8px 24px rgba(44, 62, 80, 0.07);
+  --shadow-soft: 0 2px 10px rgba(44, 62, 80, 0.045);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
   font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", -apple-system, sans-serif;
-  background: var(--paper);
+  background:
+    radial-gradient(circle at 88% 6%, rgba(201,169,110,0.12), transparent 23rem),
+    linear-gradient(180deg, #F7F3E9, var(--paper));
   color: var(--ink);
   min-height: 100vh;
   min-height: 100dvh;
@@ -31,10 +37,28 @@ input { -webkit-user-select: text; user-select: text; }
 
 button { font-family: inherit; cursor: pointer; }
 
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.ui-icon, .nav-icon, .task-symbol, .inline-icon, .result-mark {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ui-icon { width: 22px; height: 22px; display: block; }
+.task-symbol { width: 23px; height: 23px; display: block; }
+.inline-icon { width: 13px; height: 13px; vertical-align: -2px; margin-right: 5px; }
+.result-mark { width: 58px; height: 58px; }
+
 .view {
   min-height: 100vh;
   min-height: 100dvh;
-  padding: env(safe-area-inset-top) 0 calc(60px + env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) 0 calc(68px + env(safe-area-inset-bottom));
 }
 
 [hidden] { display: none !important; }
@@ -137,12 +161,15 @@ button { font-family: inherit; cursor: pointer; }
 .view-home { background: linear-gradient(180deg, var(--paper) 0%, #e8e2cf 100%); padding-top: 0; }
 
 .role-panel {
-  background: linear-gradient(135deg, var(--ink-dark), var(--ink));
-  padding: calc(env(safe-area-inset-top) + 20px) 20px 20px;
+  background:
+    radial-gradient(circle at 82% -10%, rgba(201,169,110,0.18), transparent 43%),
+    linear-gradient(140deg, #18242e, var(--ink));
+  padding: calc(env(safe-area-inset-top) + 22px) 20px 22px;
   color: var(--paper);
   border-radius: 0 0 24px 24px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 10px 28px rgba(26,37,47,0.17);
 }
 .role-panel::before {
   content: "";
@@ -151,6 +178,18 @@ button { font-family: inherit; cursor: pointer; }
   width: 200px; height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(201,169,110,0.2), transparent 70%);
+  pointer-events: none;
+}
+.role-panel::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  width: 66px;
+  height: 66px;
+  border: 1px solid rgba(201,169,110,0.14);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 9px rgba(201,169,110,0.028);
   pointer-events: none;
 }
 .role-name { font-size: 18px; color: var(--gold); letter-spacing: 3px; margin-bottom: 4px; }
@@ -209,13 +248,14 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ===== 提醒卡 ===== */
 .reminder-card {
-  background: linear-gradient(135deg, var(--paper-warm), #FAE8C8);
+  background: linear-gradient(135deg, rgba(255,252,244,0.96), rgba(250,232,200,0.72));
   margin: 14px 16px;
   padding: 14px;
   border-radius: 12px;
-  border: 1px dashed var(--gold);
+  border: 1px solid rgba(201,169,110,0.4);
   font-size: 13px;
   line-height: 1.6;
+  box-shadow: var(--shadow-soft);
 }
 .reminder-card .label { color: var(--gold); font-weight: 600; margin-right: 6px; }
 
@@ -234,26 +274,27 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ===== 任务卡 ===== */
 .task-card {
-  background: white;
+  background: var(--surface);
   margin: 0 16px 10px;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--line-soft);
   border-left: 3px solid var(--gold);
   transition: transform 0.15s;
 }
 .task-card:active { transform: scale(0.98); }
 .task-card.done { border-left-color: var(--mist); opacity: 0.55; }
 .task-icon {
-  width: 38px; height: 38px;
-  border-radius: 9px;
+  width: 42px; height: 42px;
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  background: linear-gradient(135deg, var(--gold-light), var(--gold));
-  color: var(--ink);
+  background: linear-gradient(145deg, rgba(230,213,168,0.46), rgba(201,169,110,0.23));
+  border: 1px solid rgba(201,169,110,0.28);
+  color: #9a773d;
   flex-shrink: 0;
 }
 .task-info { flex: 1; min-width: 0; }
@@ -263,21 +304,36 @@ button { font-family: inherit; cursor: pointer; }
 
 /* 大厅版任务卡 */
 .hall-card {
-  background: white;
+  background: var(--surface);
   margin: 0 16px 12px;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-soft);
 }
 .hall-card-header {
   padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--paper-warm), #F4EFD9);
+  background: linear-gradient(135deg, rgba(255,252,244,0.8), rgba(244,239,217,0.65));
   border-bottom: 1px solid var(--line);
 }
-.hall-card-title { font-size: 15px; font-weight: 600; letter-spacing: 1px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+.hall-card-title {
+  font-size: 15px; font-weight: 600; letter-spacing: 1px; flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hall-symbol {
+  display: inline-flex;
+  width: 30px; height: 30px;
+  align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(201,169,110,0.12);
+  color: #9a773d;
+  flex-shrink: 0;
+}
+.hall-symbol .task-symbol { width: 19px; height: 19px; }
 .difficulty {
   font-size: 11px; padding: 2px 8px; border-radius: 10px;
   background: var(--gold); color: var(--ink);
@@ -297,7 +353,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .reward-line { font-size: 12px; color: var(--gold); font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .small-btn {
-  background: var(--ink); color: var(--gold);
+  background: var(--ink); color: var(--gold-light);
   border: none; padding: 6px 14px;
   border-radius: 14px; font-size: 12px;
   letter-spacing: 2px;
@@ -320,12 +376,11 @@ button { font-family: inherit; cursor: pointer; }
 .header .title { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
 .header .subtitle { font-size: 11px; color: var(--gray); margin-top: 2px; }
 .add-btn {
-  width: 36px; height: 36px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--ink); color: var(--gold);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  box-shadow: 0 4px 10px rgba(44,62,80,0.2);
+  box-shadow: 0 7px 18px rgba(44,62,80,0.18);
 }
 .add-btn:active { transform: scale(0.92); }
 
@@ -347,11 +402,12 @@ button { font-family: inherit; cursor: pointer; }
   padding: 8px 16px 0;
 }
 .stat-card {
-  background: white;
+  background: var(--surface);
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   text-align: center;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-soft);
 }
 .stat-card-num { font-size: 24px; color: var(--gold); font-weight: 600; }
 .stat-card-label { font-size: 11px; color: var(--gray); margin-top: 4px; letter-spacing: 1px; }
@@ -362,10 +418,11 @@ button { font-family: inherit; cursor: pointer; }
   justify-content: space-around;
   height: 140px;
   margin: 0 16px;
-  background: white;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: 14px;
   padding: 14px;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-soft);
   gap: 6px;
 }
 .chart-bar {
@@ -412,11 +469,12 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ===== 我 ===== */
 .me-card {
-  background: white;
+  background: var(--surface);
   margin: 14px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-soft);
 }
 .me-row {
   padding: 14px 16px;
@@ -455,10 +513,10 @@ button { font-family: inherit; cursor: pointer; }
 .tabbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: calc(60px + env(safe-area-inset-bottom));
+  height: calc(68px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
-  background: rgba(255,255,255,0.97);
-  border-top: 1px solid rgba(201,169,110,0.3);
+  background: rgba(255,253,248,0.95);
+  border-top: 1px solid rgba(201,169,110,0.22);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -470,12 +528,24 @@ button { font-family: inherit; cursor: pointer; }
   text-align: center;
   font-size: 10px;
   color: var(--gray);
-  line-height: 1.6;
+  line-height: 1.25;
   flex: 1;
-  padding: 6px 0;
+  padding: 7px 0 5px;
+  transition: color 0.2s ease;
 }
-.tab .icon { font-size: 18px; display: block; }
+.tab .icon {
+  width: 38px; height: 30px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 3px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.nav-icon { display: block; width: 22px; height: 22px; }
 .tab.active { color: var(--gold); font-weight: 600; }
+.tab.active .icon {
+  background: rgba(201,169,110,0.16);
+  color: #a17d41;
+}
 
 /* ===== 覆盖层公共 ===== */
 .overlay {
@@ -525,7 +595,10 @@ button { font-family: inherit; cursor: pointer; }
   font-family: "SF Mono", "Menlo", "Courier New", monospace;
 }
 .timer-label { font-size: 11px; color: var(--mist); margin-top: 4px; letter-spacing: 3px; }
-.timer-realm { font-size: 11px; color: var(--gold); margin-top: 10px; }
+.timer-realm {
+  font-size: 11px; color: var(--gold); margin-top: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
 
 .meditate-tips { font-size: 11px; color: var(--mist); line-height: 1.8; letter-spacing: 1px; }
 .focus-quote { font-size: 13px; color: var(--gold-light); font-style: italic; letter-spacing: 2px; }
@@ -545,7 +618,7 @@ button { font-family: inherit; cursor: pointer; }
 .icon-btn.primary {
   width: 64px; height: 64px;
   background: var(--gold); color: var(--ink);
-  font-size: 22px;
+  box-shadow: 0 0 22px rgba(201,169,110,0.28);
 }
 
 /* 结算 */
@@ -553,7 +626,14 @@ button { font-family: inherit; cursor: pointer; }
   background: linear-gradient(180deg, var(--paper) 0%, #e8e2cf 100%);
   gap: 14px;
 }
-.result-icon { font-size: 60px; color: var(--gold); }
+.result-icon {
+  width: 84px; height: 84px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+  border-radius: 50%;
+  background: rgba(201,169,110,0.1);
+  border: 1px solid rgba(201,169,110,0.26);
+}
 .result-title { font-size: 24px; letter-spacing: 8px; color: var(--ink); }
 .result-task { font-size: 14px; color: var(--gray); }
 .result-mins { font-size: 13px; color: var(--gray); }

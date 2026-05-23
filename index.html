@@ -14,6 +14,47 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<svg class="icon-sprite" aria-hidden="true">
+  <symbol id="i-sunrise" viewBox="0 0 24 24">
+    <path d="M3 18h18M6 14a6 6 0 0 1 12 0M12 4v3M5.6 7.6l2.1 2.1M18.4 7.6l-2.1 2.1"/>
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 24 24">
+    <path d="M4.5 5.5c2.3-.8 4.7-.5 7.5 1.2v12c-2.8-1.7-5.2-2-7.5-1.2v-12ZM19.5 5.5c-2.3-.8-4.7-.5-7.5 1.2v12c2.8-1.7 5.2-2 7.5-1.2v-12Z"/>
+  </symbol>
+  <symbol id="i-body" viewBox="0 0 24 24">
+    <path d="M2.5 12h19M5 9v6M8 7v10M16 7v10M19 9v6M8 12h8"/>
+  </symbol>
+  <symbol id="i-lotus" viewBox="0 0 24 24">
+    <path d="M12 20c-1.8-3.6-1.8-7.3 0-11 1.8 3.7 1.8 7.4 0 11Z"/>
+    <path d="M12 20C8 18.9 5.7 16.3 5 12c3.3.5 5.6 3.1 7 8Zm0 0c4-1.1 6.3-3.7 7-8-3.3.5-5.6 3.1-7 8ZM7 20h10"/>
+  </symbol>
+  <symbol id="i-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>
+    <path d="M15 9 20 4m-4 0h4v4"/>
+  </symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24">
+    <path d="M12 3.5 14.4 9l5.6 3-5.6 3-2.4 5.5L9.6 15 4 12l5.6-3L12 3.5Z"/>
+  </symbol>
+  <symbol id="i-home" viewBox="0 0 24 24">
+    <path d="M3.5 18.5h17M5 18.5 10 9l2.4 4 2-3 4.6 8.5"/>
+    <path d="M12 4.5c2 1.2 2 3.3 0 4.5-2-1.2-2-3.3 0-4.5Z"/>
+  </symbol>
+  <symbol id="i-sword" viewBox="0 0 24 24">
+    <path d="M19.5 4.5 8.5 15.5l-3-3 11-8h3Z"/>
+    <path d="m6 14-2 2m4-1 2 2m-4-1-2.5 3.5"/>
+  </symbol>
+  <symbol id="i-scroll" viewBox="0 0 24 24">
+    <path d="M7 4.5h10c1.4 0 2.5 1.1 2.5 2.5S18.4 9.5 17 9.5H8"/>
+    <path d="M17 9.5V19H7a2.5 2.5 0 0 1 0-5h8M7 4.5A2.5 2.5 0 0 0 4.5 7v9.5"/>
+  </symbol>
+  <symbol id="i-pavilion" viewBox="0 0 24 24">
+    <path d="M4 10h16L12 5l-8 5Zm3 1v7m10-7v7M5 19h14M9 11v7m6-7v7"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 7v10m6-10v10"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 6 9 6-9 6V6Z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></symbol>
+</svg>
 
 <!-- ====================== 入门 · 道号生成 ====================== -->
 <section class="view view-onboarding" data-view="onboarding">
@@ -79,7 +120,7 @@
       <div class="title">修 炼 大 厅</div>
       <div class="subtitle">选择今日功法，开启闭关</div>
     </div>
-    <div class="add-btn" id="btn-add-task">＋</div>
+    <div class="add-btn" id="btn-add-task" aria-label="新建功法"><svg class="ui-icon"><use href="#i-plus"></use></svg></div>
   </div>
 
   <div id="task-list"></div>
@@ -153,7 +194,7 @@
   </div>
 
   <div class="footer-text">
-    《问道》v0.1 · 仅自用版<br>
+    《问道》v0.2 · 仅自用版<br>
     所有数据保存在你的设备上，不会上传任何服务器。
   </div>
   <div style="height:80px"></div>
@@ -174,7 +215,7 @@
     <div class="timer-inner">
       <div class="timer-text" id="med-time">25:00</div>
       <div class="timer-label">剩 余 时 间</div>
-      <div class="timer-realm" id="med-mult">★ 专注 ×1.2</div>
+      <div class="timer-realm" id="med-mult"><svg class="inline-icon"><use href="#i-spark"></use></svg>专注 ×1.2</div>
     </div>
   </div>
 
@@ -183,14 +224,14 @@
 
   <div class="meditate-actions">
     <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
-    <div class="icon-btn primary" id="med-toggle">⏸</div>
-    <div class="icon-btn" id="med-stop" title="放弃">✕</div>
+    <div class="icon-btn primary" id="med-toggle"><svg class="ui-icon"><use href="#i-pause"></use></svg></div>
+    <div class="icon-btn" id="med-stop" title="放弃"><svg class="ui-icon"><use href="#i-close"></use></svg></div>
   </div>
 </div>
 
 <!-- ====================== 闭关结算（覆盖层） ====================== -->
 <div class="overlay overlay-result" id="overlay-result" hidden>
-  <div class="result-icon">✦</div>
+  <div class="result-icon"><svg class="result-mark"><use href="#i-spark"></use></svg></div>
   <div class="result-title" id="result-title">闭关圆满</div>
   <div class="result-task" id="result-task">—</div>
   <div class="result-mins" id="result-mins">— 分钟</div>
@@ -253,10 +294,10 @@
 
 <!-- ====================== 底部 Tab ====================== -->
 <nav class="tabbar" id="tabbar" hidden>
-  <div class="tab active" data-go="home"><span class="icon">☯</span>主界面</div>
-  <div class="tab" data-go="tasks"><span class="icon">🗡</span>修炼</div>
-  <div class="tab" data-go="stats"><span class="icon">📜</span>典籍</div>
-  <div class="tab" data-go="me"><span class="icon">⛩</span>我</div>
+  <div class="tab active" data-go="home"><span class="icon"><svg class="nav-icon"><use href="#i-home"></use></svg></span>主界面</div>
+  <div class="tab" data-go="tasks"><span class="icon"><svg class="nav-icon"><use href="#i-sword"></use></svg></span>修炼</div>
+  <div class="tab" data-go="stats"><span class="icon"><svg class="nav-icon"><use href="#i-scroll"></use></svg></span>典籍</div>
+  <div class="tab" data-go="me"><span class="icon"><svg class="nav-icon"><use href="#i-pavilion"></use></svg></span>我</div>
 </nav>
 
 <script src="app.js"></script>

@@ -1,6 +1,6 @@
 // 问道 PWA Service Worker
 // 仅缓存静态资源，让 App 完全离线可用
-const CACHE = "wendao-v0.1.1";
+const CACHE = "wendao-v0.2-ui";
 const ASSETS = [
   "./",
   "./index.html",

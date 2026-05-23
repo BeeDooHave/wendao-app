@@ -1,10 +1,10 @@
-# 问道 · 修真自律 App (v0.1)
+# 问道 · 修真自律 App (v0.2)
 
 把枯燥的自律包装成一场修仙之旅。
 
 完成现实中的学习、运动、冥想、长期目标 → 累积修为 → 突破境界 → 从炼气走到飞升。
 
-> v0.1 是**纯自用版**：所有数据保存在你的设备 localStorage，不上传任何服务器、不需要登录。
+> v0.2 是**纯自用版**：所有数据保存在你的设备 localStorage，不上传任何服务器、不需要登录。
 
 ---
 
@@ -118,7 +118,7 @@ cd /path/to/wendao-app
 # 初始化 git
 git init
 git add .
-git commit -m "初版：问道 v0.1 自用版"
+git commit -m "初版：问道修真自律应用"
 
 # 关联远程仓库（把 YOUR_USERNAME 换成你的 GitHub 用户名）
 git remote add origin https://github.com/YOUR_USERNAME/wendao-app.git
