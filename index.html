@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="问道">
+<meta name="theme-color" content="#2C3E50">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<title>问道 · 修真自律</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ====================== 入门 · 道号生成 ====================== -->
+<section class="view view-onboarding" data-view="onboarding">
+  <div class="onboarding-bg"></div>
+  <div class="calligraphy">问<br>道</div>
+  <div class="calligraphy-sub">入 我 仙 门</div>
+
+  <div class="scroll">
+    <div class="scroll-title">— 系统赐汝道号 —</div>
+    <div class="dao-name" id="onb-name">玄 微 子</div>
+    <div class="dao-meta">天罡历 · 入门弟子</div>
+  </div>
+
+  <input type="text" id="onb-name-input" placeholder="或自定义道号（最多 6 字）" maxlength="6">
+
+  <button class="btn" id="btn-reroll">换 一 个</button>
+  <button class="btn btn-primary" id="btn-enter">入 山 拜 师</button>
+</section>
+
+<!-- ====================== 主界面 ====================== -->
+<section class="view view-home" data-view="home" hidden>
+  <div class="role-panel">
+    <div class="role-name" id="home-name">玄 微 子</div>
+    <div class="role-realm">
+      <span class="realm-badge" id="home-realm">炼气初期</span>
+      <span class="realm-sub" id="home-sub">· 入门 1 日</span>
+    </div>
+    <div class="cultivation-bar">
+      <div class="cultivation-fill" id="home-fill"></div>
+    </div>
+    <div class="cultivation-text">
+      <span>修为 <b id="home-cult">0</b></span>
+      <span>距下一阶 <b id="home-remain">25</b> ▲</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="home-streak">0</div><div class="stat-label">连续修炼</div></div>
+      <div class="stat"><div class="stat-num" id="home-total">0</div><div class="stat-label">总修炼次</div></div>
+      <div class="stat"><div class="stat-num" id="home-mins">0</div><div class="stat-label">今日分钟</div></div>
+    </div>
+  </div>
+
+  <div class="reminder-card" id="home-reminder">
+    <span class="label">道友寄语</span><span id="home-reminder-text">初入仙门，先从一柱香开始吧。</span>
+  </div>
+
+  <div class="section-title">
+    <span>今 日 功 课</span>
+    <span class="more" data-go="tasks">查看全部 →</span>
+  </div>
+  <div id="home-tasks"></div>
+
+  <div class="empty-hint" id="home-empty" hidden>
+    尚未设功法，<span class="link" data-go="tasks">前往修炼大厅创建第一道功法</span>
+  </div>
+
+  <div style="height:80px"></div>
+</section>
+
+<!-- ====================== 修炼大厅 ====================== -->
+<section class="view view-tasks" data-view="tasks" hidden>
+  <div class="header">
+    <div>
+      <div class="title">修 炼 大 厅</div>
+      <div class="subtitle">选择今日功法，开启闭关</div>
+    </div>
+    <div class="add-btn" id="btn-add-task">＋</div>
+  </div>
+
+  <div id="task-list"></div>
+
+  <div class="empty-hint" id="task-empty" hidden>
+    尚未创建任何功法。点击右上角"＋"添加。<br><br>
+    示例：晨读 / 健身 / 写论文 / 冥想 / 学英语
+  </div>
+  <div style="height:80px"></div>
+</section>
+
+<!-- ====================== 典籍 · 统计 ====================== -->
+<section class="view view-stats" data-view="stats" hidden>
+  <div class="header">
+    <div>
+      <div class="title">典 籍</div>
+      <div class="subtitle">修炼日志与数据</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-num" id="s-total-cult">0</div>
+      <div class="stat-card-label">累计修为</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="s-total-mins">0</div>
+      <div class="stat-card-label">累计修炼分钟</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="s-total-sess">0</div>
+      <div class="stat-card-label">完成闭关次数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="s-max-streak">0</div>
+      <div class="stat-card-label">最长连续天数</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span>近 7 日 修 为</span></div>
+  <div class="chart" id="chart-7d"></div>
+
+  <div class="section-title"><span>最 近 闭 关 记 录</span></div>
+  <div id="log-list"></div>
+
+  <div style="height:80px"></div>
+</section>
+
+<!-- ====================== 我 ====================== -->
+<section class="view view-me" data-view="me" hidden>
+  <div class="header">
+    <div>
+      <div class="title">天 机 阁</div>
+      <div class="subtitle">设置与道心</div>
+    </div>
+  </div>
+
+  <div class="me-card">
+    <div class="me-row"><span>道号</span><span class="me-val" id="me-name">—</span></div>
+    <div class="me-row"><span>境界</span><span class="me-val" id="me-realm">—</span></div>
+    <div class="me-row"><span>入门日期</span><span class="me-val" id="me-since">—</span></div>
+    <div class="me-row"><span>当前修为</span><span class="me-val" id="me-cult">—</span></div>
+  </div>
+
+  <div class="section-title"><span>道 心</span></div>
+  <div class="me-card">
+    <button class="me-btn" id="btn-export">导出修炼日志（JSON）</button>
+    <button class="me-btn" id="btn-import">导入日志</button>
+    <input type="file" id="import-file" accept=".json" hidden>
+    <button class="me-btn me-btn-danger" id="btn-reset">重置（重新入门）</button>
+  </div>
+
+  <div class="footer-text">
+    《问道》v0.1 · 仅自用版<br>
+    所有数据保存在你的设备上，不会上传任何服务器。
+  </div>
+  <div style="height:80px"></div>
+</section>
+
+<!-- ====================== 闭关计时（覆盖层） ====================== -->
+<div class="overlay overlay-meditate" id="overlay-meditate" hidden>
+  <div class="meditate-label">闭 关 中</div>
+  <div class="meditate-task" id="med-task">—</div>
+
+  <div class="timer-circle">
+    <svg class="timer-ring" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" r="108" stroke="rgba(201,169,110,0.15)" stroke-width="6" fill="none"/>
+      <circle cx="120" cy="120" r="108" stroke="#C9A96E" stroke-width="6" fill="none"
+        stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"
+        id="med-ring" transform="rotate(-90 120 120)"/>
+    </svg>
+    <div class="timer-inner">
+      <div class="timer-text" id="med-time">25:00</div>
+      <div class="timer-label">剩 余 时 间</div>
+      <div class="timer-realm" id="med-mult">★ 专注 ×1.2</div>
+    </div>
+  </div>
+
+  <div class="meditate-tips">切出 App 即视为出关<br>修为加成将降为 ×0.8</div>
+  <div class="focus-quote" id="med-quote">"心若不动，万物皆静"</div>
+
+  <div class="meditate-actions">
+    <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
+    <div class="icon-btn primary" id="med-toggle">⏸</div>
+    <div class="icon-btn" id="med-stop" title="放弃">✕</div>
+  </div>
+</div>
+
+<!-- ====================== 闭关结算（覆盖层） ====================== -->
+<div class="overlay overlay-result" id="overlay-result" hidden>
+  <div class="result-icon">✦</div>
+  <div class="result-title" id="result-title">闭关圆满</div>
+  <div class="result-task" id="result-task">—</div>
+  <div class="result-mins" id="result-mins">— 分钟</div>
+  <div class="result-gain">本次修为 <span id="result-gain">+0</span></div>
+  <div class="result-formula" id="result-formula"></div>
+  <button class="btn btn-primary" id="result-ok">回 主 界 面</button>
+</div>
+
+<!-- ====================== 突破境界（覆盖层） ====================== -->
+<div class="overlay overlay-breakthrough" id="overlay-breakthrough" hidden>
+  <div class="lightning"></div>
+  <div class="break-label">突 破 成 功</div>
+  <div class="break-realm" id="break-old">炼气初期</div>
+  <div class="break-arrow">↓</div>
+  <div class="break-realm new" id="break-new">炼气中期</div>
+  <div class="break-desc" id="break-desc">天降九重雷劫，破境而出</div>
+  <button class="btn btn-primary" id="break-ok">领 取</button>
+</div>
+
+<!-- ====================== 新增任务表单（覆盖层） ====================== -->
+<div class="overlay overlay-form" id="overlay-form" hidden>
+  <div class="form-card">
+    <div class="form-title" id="form-title">新 建 功 法</div>
+    <label>功法名 · 修真化命名</label>
+    <input type="text" id="f-name" placeholder="例如：吐纳静心 / 研读古籍" maxlength="20">
+    <label>对应现实任务</label>
+    <input type="text" id="f-desc" placeholder="例如：冥想 / 学英语 / 写论文" maxlength="40">
+    <label>分类</label>
+    <div class="form-tabs" id="f-cat-tabs">
+      <div class="form-tab active" data-v="daily">每日打卡</div>
+      <div class="form-tab" data-v="study">学习</div>
+      <div class="form-tab" data-v="sport">运动</div>
+      <div class="form-tab" data-v="meditate">冥想</div>
+      <div class="form-tab" data-v="goal">长期目标</div>
+    </div>
+    <label>默认时长（分钟）</label>
+    <div class="form-tabs" id="f-dur-tabs">
+      <div class="form-tab" data-v="10">10</div>
+      <div class="form-tab active" data-v="25">25</div>
+      <div class="form-tab" data-v="45">45</div>
+      <div class="form-tab" data-v="60">60</div>
+    </div>
+    <label>难度</label>
+    <div class="form-tabs" id="f-diff-tabs">
+      <div class="form-tab" data-v="1">易 ×1.0</div>
+      <div class="form-tab active" data-v="1.5">中 ×1.5</div>
+      <div class="form-tab" data-v="2.5">难 ×2.5</div>
+      <div class="form-tab" data-v="4">极难 ×4.0</div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="f-cancel">取消</button>
+      <button class="btn btn-primary" id="f-save">保存</button>
+      <button class="btn btn-danger" id="f-delete" hidden>删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== 飘字提示 ====================== -->
+<div id="toast" class="toast" hidden></div>
+
+<!-- ====================== 底部 Tab ====================== -->
+<nav class="tabbar" id="tabbar" hidden>
+  <div class="tab active" data-go="home"><span class="icon">☯</span>主界面</div>
+  <div class="tab" data-go="tasks"><span class="icon">🗡</span>修炼</div>
+  <div class="tab" data-go="stats"><span class="icon">📜</span>典籍</div>
+  <div class="tab" data-go="me"><span class="icon">⛩</span>我</div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
