@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
 <title>问道 · 修真自律</title>
-<link rel="stylesheet" href="styles.css?v=0.16-solid-spirit">
+<link rel="stylesheet" href="styles.css?v=0.23-qi-preview">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -98,7 +98,7 @@
 
     <div class="cultivation-world">
       <div class="world-art" aria-hidden="true"></div>
-      <div class="spirit-avatar-layer" aria-hidden="true"></div>
+      <div class="fashang-layer" aria-hidden="true"></div>
       <div class="spirit-orbit" aria-hidden="true">
         <span class="spirit-orb orb-one"></span>
         <span class="spirit-orb orb-two"></span>
@@ -149,6 +149,13 @@
     <div class="demo-console" id="demo-console" hidden>
       <div class="demo-title">破 境 推 演</div>
       <div class="demo-copy">模拟完成今日功课，观察修为增长与破境演出</div>
+      <div class="demo-stage-title">炼气显相预览</div>
+      <div class="demo-stage-grid" aria-label="选择炼气阶段">
+        <button type="button" data-demo-qi-stage="0">初期</button>
+        <button type="button" data-demo-qi-stage="1">中期</button>
+        <button type="button" data-demo-qi-stage="2">后期</button>
+        <button type="button" data-demo-qi-stage="3">圆满</button>
+      </div>
       <button type="button" class="demo-action" id="btn-demo-next">完成下一门功课</button>
       <div class="demo-links">
         <button type="button" id="btn-demo-restore">还原实修数据</button>
@@ -368,6 +375,6 @@
   <div class="tab" data-go="me"><span class="icon"><svg class="nav-icon"><use href="#i-pavilion"></use></svg></span>我</div>
 </nav>
 
-<script src="app.js?v=0.16-solid-spirit"></script>
+<script src="app.js?v=0.23-qi-preview"></script>
 </body>
 </html>

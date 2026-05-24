@@ -1,19 +1,17 @@
 // 问道 PWA Service Worker
 // 仅缓存静态资源，让 App 完全离线可用
-const CACHE = "wendao-v0.16-solid-spirit";
+const CACHE = "wendao-v0.23-qi-preview";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=0.16-solid-spirit",
-  "./app.js?v=0.16-solid-spirit",
+  "./styles.css?v=0.23-qi-preview",
+  "./app.js?v=0.23-qi-preview",
   "./manifest.json",
   "./assets/home-cultivation-base-v2.webp",
-  "./assets/home-spirit-overlay-v1.webp",
+  "./assets/home-fashang-qi.webp?v=2",
   "./assets/home-study-scene-v1.webp",
   "./assets/home-body-tempering-v1.webp",
   "./assets/onboarding-mountain-gate-v1.webp",
-  "./assets/home-realm-qi-mid-v1.webp",
-  "./assets/home-spirit-solid-qi-mid-v1.webp",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
 ];

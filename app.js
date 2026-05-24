@@ -249,6 +249,7 @@ function renderHome(options = {}) {
   if (!S) return;
   if (!options.skipPassive) accruePassiveCultivation();
   setRealmVisualState(S.realmIdx);
+  renderDemoQiStage();
   const realmName = REALMS[S.realmIdx][0];
   document.getElementById("home-realm").textContent = realmName;
 
@@ -341,6 +342,12 @@ function svgIcon(name, className = "task-symbol") {
 // ============== 推演模式 ==============
 let demoBreakthroughTimer = null;
 
+function renderDemoQiStage() {
+  document.querySelectorAll("[data-demo-qi-stage]").forEach((button) => {
+    button.classList.toggle("active", S && S.realmIdx === Number(button.dataset.demoQiStage));
+  });
+}
+
 function openDemoConsole() {
   if (!S) return;
   if (!localStorage.getItem(DEMO_SNAPSHOT_KEY)) {
@@ -349,6 +356,7 @@ function openDemoConsole() {
   document.body.classList.add("demo-mode");
   document.getElementById("demo-console").hidden = false;
   document.getElementById("btn-demo-next").disabled = false;
+  renderDemoQiStage();
 }
 
 function closeDemoConsole() {
@@ -407,6 +415,26 @@ function simulateNextTask() {
   }
 }
 
+function previewQiStage(stageIdx) {
+  if (!S || medState || stageIdx < 0 || stageIdx > 3) return;
+  if (!localStorage.getItem(DEMO_SNAPSHOT_KEY)) {
+    localStorage.setItem(DEMO_SNAPSHOT_KEY, JSON.stringify(S));
+  }
+  if (demoBreakthroughTimer) {
+    clearTimeout(demoBreakthroughTimer);
+    demoBreakthroughTimer = null;
+  }
+  document.getElementById("overlay-breakthrough").hidden = true;
+  document.body.classList.add("demo-mode");
+  S.realmIdx = stageIdx;
+  S.cultivation = REALMS[stageIdx][1];
+  S.passiveUpdatedAt = Date.now();
+  saveState();
+  renderHome({ skipPassive: true });
+  closeDemoConsole();
+  toast(`推演：切换至 ${REALMS[stageIdx][0]}`);
+}
+
 function restoreDemoSnapshot() {
   const raw = localStorage.getItem(DEMO_SNAPSHOT_KEY);
   if (!raw) {
@@ -432,6 +460,9 @@ function initDemoMode() {
   document.getElementById("btn-demo-close").onclick = closeDemoConsole;
   document.getElementById("btn-demo-next").onclick = simulateNextTask;
   document.getElementById("btn-demo-restore").onclick = restoreDemoSnapshot;
+  document.querySelectorAll("[data-demo-qi-stage]").forEach((button) => {
+    button.onclick = () => previewQiStage(Number(button.dataset.demoQiStage));
+  });
   if (localStorage.getItem(DEMO_SNAPSHOT_KEY)) document.body.classList.add("demo-mode");
 }
 
