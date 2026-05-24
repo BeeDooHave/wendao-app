@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
 <title>问道 · 修真自律</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=0.16-solid-spirit">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -58,9 +58,12 @@
 
 <!-- ====================== 入门 · 道号生成 ====================== -->
 <section class="view view-onboarding" data-view="onboarding">
-  <div class="onboarding-bg"></div>
+  <div class="onboarding-bg" aria-hidden="true"></div>
+  <div class="onboarding-motes" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
   <div class="calligraphy">问<br>道</div>
-  <div class="calligraphy-sub">入 我 仙 门</div>
+  <div class="calligraphy-sub">山 门 初 叩</div>
 
   <div class="scroll">
     <div class="scroll-title">— 系统赐汝道号 —</div>
@@ -77,22 +80,80 @@
 <!-- ====================== 主界面 ====================== -->
 <section class="view view-home" data-view="home" hidden>
   <div class="role-panel">
-    <div class="role-name" id="home-name">玄 微 子</div>
-    <div class="role-realm">
-      <span class="realm-badge" id="home-realm">炼气初期</span>
-      <span class="realm-sub" id="home-sub">· 入门 1 日</span>
+    <div class="world-sky" aria-hidden="true">
+      <span class="star star-one"></span>
+      <span class="star star-two"></span>
+      <span class="star star-three"></span>
+      <span class="star star-four"></span>
+      <span class="star star-five"></span>
     </div>
-    <div class="cultivation-bar">
-      <div class="cultivation-fill" id="home-fill"></div>
+
+    <div class="world-topbar">
+      <div class="essence-pill"><span>灵息</span><b id="home-passive-top">2.00</b><small>/时</small></div>
+      <div class="essence-pill"><span>功课</span><b id="home-done-tasks">0</b><small>/</small><b id="home-task-count">3</b></div>
+      <div class="essence-pill"><span>破境尚需</span><b id="home-top-remain">75</b></div>
     </div>
-    <div class="cultivation-text">
-      <span>修为 <b id="home-cult">0</b></span>
-      <span>距下一阶 <b id="home-remain">25</b> ▲</span>
+
+    <div class="realm-vertical" aria-hidden="true">修<br>炼</div>
+
+    <div class="cultivation-world">
+      <div class="world-art" aria-hidden="true"></div>
+      <div class="spirit-avatar-layer" aria-hidden="true"></div>
+      <div class="spirit-orbit" aria-hidden="true">
+        <span class="spirit-orb orb-one"></span>
+        <span class="spirit-orb orb-two"></span>
+        <span class="spirit-orb orb-three"></span>
+      </div>
+      <div class="world-mist mist-far" aria-hidden="true"></div>
+      <div class="world-mist mist-near" aria-hidden="true"></div>
+      <div class="spirit-halo" aria-hidden="true"></div>
+      <div class="spirit-stream stream-one" aria-hidden="true"></div>
+      <div class="spirit-stream stream-two" aria-hidden="true"></div>
+      <div class="body-aura" aria-hidden="true"></div>
+      <div class="qi-motes" aria-hidden="true">
+        <span class="mote mote-one"></span>
+        <span class="mote mote-two"></span>
+        <span class="mote mote-three"></span>
+        <span class="mote mote-four"></span>
+        <span class="mote mote-five"></span>
+        <span class="mote mote-six"></span>
+      </div>
+
     </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="home-streak">0</div><div class="stat-label">连续修炼</div></div>
-      <div class="stat"><div class="stat-num" id="home-total">0</div><div class="stat-label">总修炼次</div></div>
-      <div class="stat"><div class="stat-num" id="home-mins">0</div><div class="stat-label">今日分钟</div></div>
+
+    <div class="cultivation-panel">
+      <div class="progress-stage">
+        <span class="realm-badge" id="home-realm">炼气初期</span>
+        <span class="next-realm">突破至 <b id="home-next-realm">炼气中期</b></span>
+      </div>
+      <div class="cultivation-total">
+        <b id="home-cult">0.0</b><span>/</span><em id="home-threshold">75</em>
+      </div>
+      <div class="cultivation-bar">
+        <div class="cultivation-fill" id="home-fill"></div>
+      </div>
+      <div class="speed-row">
+        <span>修炼速度：<b id="home-speed">2.00</b>/小时</span>
+        <span>下次突破：<b id="home-remain">75</b> 修为</span>
+      </div>
+      <div class="daily-forecast" id="home-forecast">完成今日功课，可冲击下一境界</div>
+    </div>
+
+    <div class="cultivation-actions">
+      <button class="world-side-btn" data-go="stats">典籍</button>
+      <button class="breath-btn" id="btn-home-breathe"><strong>吐 纳</strong><small>开始入定</small></button>
+      <button class="world-side-btn" data-go="tasks">功法</button>
+    </div>
+
+    <button type="button" class="demo-entry" id="btn-demo-open">推 演</button>
+    <div class="demo-console" id="demo-console" hidden>
+      <div class="demo-title">破 境 推 演</div>
+      <div class="demo-copy">模拟完成今日功课，观察修为增长与破境演出</div>
+      <button type="button" class="demo-action" id="btn-demo-next">完成下一门功课</button>
+      <div class="demo-links">
+        <button type="button" id="btn-demo-restore">还原实修数据</button>
+        <button type="button" id="btn-demo-close">收起</button>
+      </div>
     </div>
   </div>
 
@@ -100,7 +161,7 @@
     <span class="label">道友寄语</span><span id="home-reminder-text">初入仙门，先从一柱香开始吧。</span>
   </div>
 
-  <div class="section-title">
+  <div class="section-title home-lessons">
     <span>今 日 功 课</span>
     <span class="more" data-go="tasks">查看全部 →</span>
   </div>
@@ -202,42 +263,49 @@
 
 <!-- ====================== 闭关计时（覆盖层） ====================== -->
 <div class="overlay overlay-meditate" id="overlay-meditate" hidden>
-  <div class="meditate-label">闭 关 中</div>
-  <div class="meditate-task" id="med-task">—</div>
-
-  <div class="timer-circle">
-    <svg class="timer-ring" viewBox="0 0 240 240">
-      <circle cx="120" cy="120" r="108" stroke="rgba(201,169,110,0.15)" stroke-width="6" fill="none"/>
-      <circle cx="120" cy="120" r="108" stroke="#C9A96E" stroke-width="6" fill="none"
-        stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"
-        id="med-ring" transform="rotate(-90 120 120)"/>
-    </svg>
-    <div class="timer-inner">
-      <div class="timer-text" id="med-time">25:00</div>
-      <div class="timer-label">剩 余 时 间</div>
-      <div class="timer-realm" id="med-mult"><svg class="inline-icon"><use href="#i-spark"></use></svg>专注 ×1.2</div>
+  <div class="session-stage">
+    <div class="meditate-heading">
+      <div class="meditate-label">入 定 中</div>
+      <div class="meditate-task" id="med-task">—</div>
     </div>
-  </div>
 
-  <div class="meditate-tips">切出 App 即视为出关<br>修为加成将降为 ×0.8</div>
-  <div class="focus-quote" id="med-quote">"心若不动，万物皆静"</div>
+    <div class="focus-quote" id="med-quote">"心若不动，万物皆静"</div>
 
-  <div class="meditate-actions">
-    <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
-    <div class="icon-btn primary" id="med-toggle"><svg class="ui-icon"><use href="#i-pause"></use></svg></div>
-    <div class="icon-btn" id="med-stop" title="放弃"><svg class="ui-icon"><use href="#i-close"></use></svg></div>
+    <div class="timer-circle">
+      <svg class="timer-ring" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="108" stroke="rgba(201,169,110,0.15)" stroke-width="6" fill="none"/>
+        <circle cx="120" cy="120" r="108" stroke="#C9A96E" stroke-width="6" fill="none"
+          stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"
+          id="med-ring" transform="rotate(-90 120 120)"/>
+      </svg>
+      <div class="timer-inner">
+        <div class="timer-text" id="med-time">25:00</div>
+        <div class="timer-label">剩 余 时 间</div>
+        <div class="timer-realm" id="med-mult"><svg class="inline-icon"><use href="#i-spark"></use></svg>心境澄明 · 修为 ×1.2</div>
+      </div>
+    </div>
+
+    <div class="meditate-tips">切出 App，心神微散 · 修为降为 ×0.8</div>
+
+    <div class="meditate-actions">
+      <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
+      <div class="icon-btn primary" id="med-toggle"><svg class="ui-icon"><use href="#i-pause"></use></svg></div>
+      <div class="icon-btn" id="med-stop" title="提前出关"><svg class="ui-icon"><use href="#i-close"></use></svg></div>
+    </div>
   </div>
 </div>
 
 <!-- ====================== 闭关结算（覆盖层） ====================== -->
 <div class="overlay overlay-result" id="overlay-result" hidden>
-  <div class="result-icon"><svg class="result-mark"><use href="#i-spark"></use></svg></div>
-  <div class="result-title" id="result-title">闭关圆满</div>
-  <div class="result-task" id="result-task">—</div>
-  <div class="result-mins" id="result-mins">— 分钟</div>
-  <div class="result-gain">本次修为 <span id="result-gain">+0</span></div>
-  <div class="result-formula" id="result-formula"></div>
-  <button class="btn btn-primary" id="result-ok">回 主 界 面</button>
+  <div class="result-scene-card">
+    <div class="result-icon"><svg class="result-mark"><use href="#i-spark"></use></svg></div>
+    <div class="result-title" id="result-title">闭关圆满</div>
+    <div class="result-task" id="result-task">—</div>
+    <div class="result-mins" id="result-mins">— 分钟</div>
+    <div class="result-gain">本次修为 <span id="result-gain">+0</span></div>
+    <div class="result-formula" id="result-formula"></div>
+    <button class="btn btn-primary" id="result-ok">收 敛 气 息</button>
+  </div>
 </div>
 
 <!-- ====================== 突破境界（覆盖层） ====================== -->
@@ -300,6 +368,6 @@
   <div class="tab" data-go="me"><span class="icon"><svg class="nav-icon"><use href="#i-pavilion"></use></svg></span>我</div>
 </nav>
 
-<script src="app.js"></script>
+<script src="app.js?v=0.16-solid-spirit"></script>
 </body>
 </html>

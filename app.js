@@ -52,8 +52,12 @@ const REMINDERS = {
   good: "道心已稳，持之以恒，必有所成。",
 };
 
+const PASSIVE_CULTIVATION_PER_HOUR = 2;
+const PASSIVE_CULTIVATION_CAP_HOURS = 24;
+
 // ============== 数据层 ==============
 const STORAGE_KEY = "wendao.state.v1";
+const DEMO_SNAPSHOT_KEY = "wendao.demo.snapshot.v1";
 
 const DEFAULT_STATE = {
   name: "玄微子",
@@ -63,6 +67,8 @@ const DEFAULT_STATE = {
   streak: 0,                 // 连续修炼天数
   lastDay: null,             // 上次完成任务的日期 YYYY-MM-DD
   maxStreak: 0,              // 历史最长连续
+  passiveUpdatedAt: null,    // 静修累积计算时间戳
+  pendingBreakthrough: null, // 自动静修跨境后的待展示演出
   tasks: [],                 // [{id,name,desc,cat,duration,difficulty}]
   logs: [],                  // [{id,taskId,taskName,date,minutes,gain,focused}]
 };
@@ -143,6 +149,49 @@ function realmProgress(cult, idx) {
   return Math.min(100, ((cult - lo) / (hi - lo)) * 100);
 }
 
+const REALM_MAJOR_CLASSES = ["realm-major-qi", "realm-major-foundation", "realm-major-golden", "realm-major-nascent", "realm-major-deity", "realm-major-void", "realm-major-union", "realm-major-mahayana", "realm-major-tribulation"];
+const REALM_STAGE_CLASSES = ["realm-stage-early", "realm-stage-middle", "realm-stage-late", "realm-stage-perfect"];
+
+function setRealmVisualState(realmIdx) {
+  const majorIdx = realmIdx >= 32 ? 8 : Math.min(7, Math.floor(realmIdx / 4));
+  const stageIdx = realmIdx < 32 ? realmIdx % 4 : 3;
+  document.body.classList.remove(...REALM_MAJOR_CLASSES, ...REALM_STAGE_CLASSES);
+  document.body.classList.add(REALM_MAJOR_CLASSES[majorIdx], REALM_STAGE_CLASSES[stageIdx]);
+}
+
+function formatCultivation(value) {
+  return value < 100 ? value.toFixed(1) : Math.round(value).toLocaleString();
+}
+
+function focusedGain(task) {
+  return Math.round(task.duration * task.difficulty * 1.2);
+}
+
+function accruePassiveCultivation() {
+  if (!S || !S.createdAt || medState || document.body.classList.contains("in-meditation")) return;
+  const now = Date.now();
+  if (!S.passiveUpdatedAt) {
+    S.passiveUpdatedAt = now;
+    saveState();
+    return;
+  }
+  const elapsedHours = Math.min(
+    Math.max(0, now - S.passiveUpdatedAt) / 3600000,
+    PASSIVE_CULTIVATION_CAP_HOURS
+  );
+  if (!elapsedHours) return;
+
+  const oldRealm = S.realmIdx;
+  S.cultivation += elapsedHours * PASSIVE_CULTIVATION_PER_HOUR;
+  S.passiveUpdatedAt = now;
+  const newRealm = getRealm(S.cultivation);
+  if (newRealm > oldRealm) {
+    S.realmIdx = newRealm;
+    S.pendingBreakthrough = { oldRealm, newRealm };
+  }
+  saveState();
+}
+
 // ============== 路由（视图切换） ==============
 const VIEWS = ["onboarding","home","tasks","stats","me"];
 let currentView = "home";
@@ -183,6 +232,7 @@ function initOnboarding() {
     S = JSON.parse(JSON.stringify(DEFAULT_STATE));
     S.name = finalName;
     S.createdAt = new Date().toISOString();
+    S.passiveUpdatedAt = Date.now();
     // 给一些示例任务
     S.tasks = [
       { id: uid(), name: "晨起吐纳", desc: "起床 + 喝水 + 拉伸", cat: "daily", duration: 10, difficulty: 1.0 },
@@ -195,30 +245,48 @@ function initOnboarding() {
 }
 
 // ============== 主界面 ==============
-function renderHome() {
+function renderHome(options = {}) {
   if (!S) return;
-  document.getElementById("home-name").textContent = S.name;
+  if (!options.skipPassive) accruePassiveCultivation();
+  setRealmVisualState(S.realmIdx);
   const realmName = REALMS[S.realmIdx][0];
   document.getElementById("home-realm").textContent = realmName;
 
   const createdDay = S.createdAt ? dateStr(new Date(S.createdAt)) : null;
   const days = createdDay ? Math.max(1, daysBetween(createdDay, todayStr()) + 1) : 1;
-  document.getElementById("home-sub").textContent = `· 入门 ${days} 日`;
 
-  document.getElementById("home-cult").textContent = Math.round(S.cultivation);
+  document.getElementById("home-cult").textContent = formatCultivation(S.cultivation);
   const nextTh = nextRealmThreshold(S.realmIdx);
   const remain = Math.max(0, nextTh - S.cultivation);
-  document.getElementById("home-remain").textContent = Math.round(remain);
+  const nextRealm = REALMS[Math.min(S.realmIdx + 1, REALMS.length - 1)][0];
+  document.getElementById("home-next-realm").textContent = nextRealm;
+  document.getElementById("home-threshold").textContent = Math.round(nextTh).toLocaleString();
+  document.getElementById("home-remain").textContent = Math.ceil(remain).toLocaleString();
+  document.getElementById("home-speed").textContent = PASSIVE_CULTIVATION_PER_HOUR.toFixed(2);
 
   const progress = realmProgress(S.cultivation, S.realmIdx);
   document.getElementById("home-fill").style.width = progress + "%";
 
-  document.getElementById("home-streak").textContent = S.streak;
-  document.getElementById("home-total").textContent = S.logs.length;
-
   const todayLogs = S.logs.filter(l => l.date === todayStr());
   const todayMins = todayLogs.reduce((sum, l) => sum + l.minutes, 0);
-  document.getElementById("home-mins").textContent = todayMins;
+  const doneTaskCount = S.tasks.filter(t => todayLogs.some(l => l.taskId === t.id && l.complete)).length;
+  document.getElementById("home-passive-top").textContent = PASSIVE_CULTIVATION_PER_HOUR.toFixed(2);
+  document.getElementById("home-done-tasks").textContent = doneTaskCount;
+  document.getElementById("home-task-count").textContent = S.tasks.length;
+  document.getElementById("home-top-remain").textContent = Math.ceil(remain).toLocaleString();
+
+  const unfinishedTasks = S.tasks.filter(t => !todayLogs.some(l => l.taskId === t.id && l.complete));
+  const potentialGain = unfinishedTasks.reduce((sum, task) => sum + focusedGain(task), 0);
+  const forecast = document.getElementById("home-forecast");
+  forecast.classList.remove("ready");
+  if (S.realmIdx >= REALMS.length - 1) {
+    forecast.textContent = "已至此界巅峰，静候飞升天机";
+  } else if (potentialGain >= remain) {
+    forecast.textContent = `今日余下功课 +${potentialGain} 修为 · 可突破 ${nextRealm}`;
+    forecast.classList.add("ready");
+  } else {
+    forecast.textContent = `今日余下功课 +${potentialGain} 修为 · 尚差 ${Math.ceil(remain - potentialGain)} 破境`;
+  }
 
   // 提醒文案
   const reminderText = pickReminder(todayMins, remain, days);
@@ -243,6 +311,13 @@ function renderHome() {
     card.onclick = () => startMeditate(t);
     list.appendChild(card);
   });
+
+  if (S.pendingBreakthrough && !medState) {
+    const pending = S.pendingBreakthrough;
+    S.pendingBreakthrough = null;
+    saveState();
+    setTimeout(() => showBreakthrough(REALMS[pending.oldRealm][0], REALMS[pending.newRealm][0]), 0);
+  }
 }
 
 function pickReminder(todayMins, remain, days) {
@@ -255,12 +330,109 @@ function pickReminder(todayMins, remain, days) {
 }
 
 function estimateGain(task) {
-  // 简化估算（结算时按实际时长+加成）
-  return Math.round(task.duration * task.difficulty);
+  // 以保持专注的闭关收益预估，和首页破境预测一致。
+  return focusedGain(task);
 }
 
 function svgIcon(name, className = "task-symbol") {
   return `<svg class="${className}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+}
+
+// ============== 推演模式 ==============
+let demoBreakthroughTimer = null;
+
+function openDemoConsole() {
+  if (!S) return;
+  if (!localStorage.getItem(DEMO_SNAPSHOT_KEY)) {
+    localStorage.setItem(DEMO_SNAPSHOT_KEY, JSON.stringify(S));
+  }
+  document.body.classList.add("demo-mode");
+  document.getElementById("demo-console").hidden = false;
+  document.getElementById("btn-demo-next").disabled = false;
+}
+
+function closeDemoConsole() {
+  document.getElementById("demo-console").hidden = true;
+}
+
+function simulateNextTask() {
+  if (!S || medState) return;
+  const today = todayStr();
+  const todayLogs = S.logs.filter(l => l.date === today);
+  const task = S.tasks.find(t => !todayLogs.some(l => l.taskId === t.id && l.complete));
+  if (!task) {
+    toast("今日功课均已推演完成，可还原后重试");
+    return;
+  }
+
+  const oldRealm = S.realmIdx;
+  const gain = focusedGain(task);
+  S.logs.push({
+    id: uid(),
+    taskId: task.id,
+    taskName: task.name,
+    date: today,
+    minutes: task.duration,
+    gain,
+    focused: true,
+    complete: true,
+    simulated: true,
+  });
+  S.cultivation += gain;
+  S.passiveUpdatedAt = Date.now();
+  if (S.lastDay !== today) {
+    S.streak = S.lastDay && daysBetween(S.lastDay, today) === 1 ? S.streak + 1 : 1;
+    S.lastDay = today;
+    S.maxStreak = Math.max(S.maxStreak, S.streak);
+  }
+  const newRealm = getRealm(S.cultivation);
+  saveState();
+  renderHome({ skipPassive: true });
+  flyGain(gain);
+  toast(`推演：${task.name} 完成 · 修为 +${gain}`);
+
+  if (newRealm > oldRealm) {
+    const nextButton = document.getElementById("btn-demo-next");
+    nextButton.disabled = true;
+    if (demoBreakthroughTimer) clearTimeout(demoBreakthroughTimer);
+    demoBreakthroughTimer = setTimeout(() => {
+      S.realmIdx = newRealm;
+      saveState();
+      renderHome({ skipPassive: true });
+      closeDemoConsole();
+      showBreakthrough(REALMS[oldRealm][0], REALMS[newRealm][0]);
+      nextButton.disabled = false;
+      demoBreakthroughTimer = null;
+    }, 850);
+  }
+}
+
+function restoreDemoSnapshot() {
+  const raw = localStorage.getItem(DEMO_SNAPSHOT_KEY);
+  if (!raw) {
+    toast("当前没有可还原的推演记录");
+    return;
+  }
+  if (demoBreakthroughTimer) {
+    clearTimeout(demoBreakthroughTimer);
+    demoBreakthroughTimer = null;
+  }
+  S = { ...DEFAULT_STATE, ...JSON.parse(raw) };
+  localStorage.removeItem(DEMO_SNAPSHOT_KEY);
+  document.body.classList.remove("demo-mode");
+  document.getElementById("overlay-breakthrough").hidden = true;
+  closeDemoConsole();
+  saveState();
+  showView("home");
+  toast("已还原推演前的修为");
+}
+
+function initDemoMode() {
+  document.getElementById("btn-demo-open").onclick = openDemoConsole;
+  document.getElementById("btn-demo-close").onclick = closeDemoConsole;
+  document.getElementById("btn-demo-next").onclick = simulateNextTask;
+  document.getElementById("btn-demo-restore").onclick = restoreDemoSnapshot;
+  if (localStorage.getItem(DEMO_SNAPSHOT_KEY)) document.body.classList.add("demo-mode");
 }
 
 // ============== 修炼大厅 ==============
@@ -394,9 +566,20 @@ function initForm() {
 // ============== 闭关计时 ==============
 let medState = null;
 let medTimer = null;
+const MEDITATION_SCENE_CLASSES = ["scene-study", "scene-sport"];
+
+function setMeditationScene(task) {
+  document.body.classList.remove(...MEDITATION_SCENE_CLASSES);
+  if (task.cat === "study") document.body.classList.add("scene-study");
+  if (task.cat === "sport") document.body.classList.add("scene-sport");
+}
 
 function startMeditate(task) {
   const overlay = document.getElementById("overlay-meditate");
+  showView("home");
+  S.passiveUpdatedAt = Date.now();
+  saveState();
+  setMeditationScene(task);
   document.getElementById("med-task").textContent = task.name + " · " + task.duration + " 分钟";
   document.getElementById("med-time").textContent = formatTime(task.duration * 60);
   document.getElementById("med-quote").textContent = `"${rand(QUOTES)}"`;
@@ -411,6 +594,8 @@ function startMeditate(task) {
     startedAt: Date.now(),
   };
   updateMedUI();
+  document.body.classList.add("in-meditation");
+  document.body.classList.remove("meditation-distracted", "meditation-paused", "meditation-result");
   overlay.hidden = false;
   document.getElementById("tabbar").style.display = "none";
 
@@ -434,9 +619,11 @@ function updateMedUI() {
   const progress = 1 - medState.leftSec / medState.totalSec;
   const dashOffset = 678.58 * progress;
   document.getElementById("med-ring").setAttribute("stroke-dashoffset", dashOffset);
+  const activeSpeed = Math.round(medState.task.difficulty * (medState.focused ? 1.2 : 0.8) * 60);
   document.getElementById("med-mult").innerHTML = medState.focused
-    ? `${svgIcon("spark", "inline-icon")}专注 ×1.2`
-    : "心魔扰心 ×0.8";
+    ? `${svgIcon("spark", "inline-icon")}心境澄明 · ${activeSpeed} 修为/小时`
+    : `心神微散 · ${activeSpeed} 修为/小时`;
+  document.body.classList.toggle("meditation-distracted", !medState.focused);
 }
 
 function formatTime(sec) {
@@ -505,13 +692,14 @@ function finishMeditate(complete) {
     showResult(task, actualMins, gain);
   } else {
     toast("未满 5 分钟，本次不计入修为");
+    exitMeditationScene();
   }
   hideOverlay("overlay-meditate");
-  document.getElementById("tabbar").style.display = "";
   medState = null;
 }
 
 function showResult(task, mins, gain, onOk) {
+  document.body.classList.add("meditation-result");
   document.getElementById("result-title").textContent = mins >= task.duration ? "闭关圆满" : "出关";
   document.getElementById("result-task").textContent = task.name;
   document.getElementById("result-mins").textContent = mins + " 分钟";
@@ -521,12 +709,26 @@ function showResult(task, mins, gain, onOk) {
   document.getElementById("overlay-result").hidden = false;
   document.getElementById("result-ok").onclick = () => {
     document.getElementById("overlay-result").hidden = true;
+    exitMeditationScene();
     if (onOk) onOk();
     else {
       showView("home");
       flyGain(gain);
     }
   };
+}
+
+function exitMeditationScene() {
+  document.body.classList.remove(
+    "in-meditation",
+    "meditation-distracted",
+    "meditation-paused",
+    "meditation-result",
+    ...MEDITATION_SCENE_CLASSES
+  );
+  S.passiveUpdatedAt = Date.now();
+  saveState();
+  document.getElementById("tabbar").style.display = "";
 }
 
 function flyGain(gain) {
@@ -544,7 +746,7 @@ function showBreakthrough(oldName, newName) {
   document.getElementById("break-old").textContent = oldName;
   document.getElementById("break-new").textContent = newName;
   document.getElementById("break-desc").textContent =
-    `历经 ${S.streak} 日苦修，${S.name} 破 ${newName} 之境`;
+    `灵气贯通周天，${S.name} 一举破入 ${newName} 之境`;
   document.getElementById("overlay-breakthrough").hidden = false;
   document.getElementById("break-ok").onclick = () => {
     document.getElementById("overlay-breakthrough").hidden = true;
@@ -557,9 +759,18 @@ function hideOverlay(id) {
 }
 
 function initMeditate() {
+  document.getElementById("btn-home-breathe").onclick = () => {
+    if (!S || S.tasks.length === 0) {
+      showView("tasks");
+      return;
+    }
+    startMeditate(S.tasks[0]);
+  };
+
   document.getElementById("med-toggle").onclick = () => {
     if (!medState) return;
     medState.paused = !medState.paused;
+    document.body.classList.toggle("meditation-paused", medState.paused);
     document.getElementById("med-toggle").innerHTML = svgIcon(medState.paused ? "play" : "pause", "ui-icon");
   };
   document.getElementById("med-add5").onclick = () => {
@@ -573,7 +784,6 @@ function initMeditate() {
     if (!medState) return;
     if (confirm("确定提前出关？\n若已坐满 5 分钟，本次修为会按比例计入。")) {
       finishMeditate(false);
-      document.getElementById("tabbar").style.display = "";
     }
   };
 
@@ -715,6 +925,7 @@ function init() {
   initOnboarding();
   initForm();
   initMeditate();
+  initDemoMode();
   initMe();
 
   if (!S) {
@@ -722,6 +933,12 @@ function init() {
   } else {
     showView("home");
   }
+
+  setInterval(() => {
+    if (!S || medState || document.body.classList.contains("in-meditation")) return;
+    accruePassiveCultivation();
+    if (currentView === "home") renderHome();
+  }, 60000);
 }
 
 // PWA: 注册 service worker
