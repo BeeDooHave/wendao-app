@@ -144,6 +144,7 @@ const INTENTION_MINUTES = 1;
 const RETURN_GAP_DAYS = 3;
 const STORY_SCENE_KEYS = ["first-practice", "second-day", "steadfast"];
 const WORLD_ENV_CLASSES = ["world-lamp-lit", "world-rain-soft", "world-study-mark", "world-body-mark", "world-resting", "world-away"];
+const WORLD_ROOT_CLASSES = ["world-root-wood", "world-root-fire", "world-root-earth", "world-root-metal", "world-root-water"];
 
 // ============== 数据层 ==============
 const STORAGE_KEY = "wendao.state.v1";
@@ -989,8 +990,11 @@ function renderHome(options = {}) {
 }
 
 function applyWorldEnvironment(state) {
-  document.body.classList.remove(...WORLD_ENV_CLASSES);
+  document.body.classList.remove(...WORLD_ENV_CLASSES, ...WORLD_ROOT_CLASSES);
   if (!state) return;
+  if (state.identity && state.identity.rootKey) {
+    document.body.classList.add(`world-root-${state.identity.rootKey}`);
+  }
   const progress = storyProgress(state);
   const gap = state.lastDay ? daysBetween(state.lastDay, todayStr()) : 0;
   if (progress.completed.length > 0) document.body.classList.add("world-lamp-lit");
@@ -1090,7 +1094,7 @@ function storyChapters(state) {
     title: "灵根引气",
     date: firstComplete.date,
     place: "照微灯廊",
-    text: `你完成了「${firstComplete.taskName}」。${rootLore.omen}闻钟说，这便是${rootLore.relic}认主的第一声回响。`,
+    text: `你亲手完成了「${firstComplete.taskName}」。静室铜灯的火芯由候火稳稳立起，暖光第一次越过案沿。${rootLore.omen}闻钟轻声道：“这一息，是你自己引来的。”${rootLore.relic}随之传来第一声回响。`,
   });
   const intention = state.logs.find(log => log.practiceType === "intention");
   if (intention) chapters.push({
@@ -1110,13 +1114,16 @@ function storyChapters(state) {
     place: "温炉药庐",
     text: "养息日里，余烬翁递来温水：灯不必时时烈燃，只要不将自己耗尽。山门为你记下了这一次守势。",
   });
-  if (progress.activeDays.length >= 2) chapters.push({
+  if (progress.activeDays.length >= 2) {
+    const secondDayComplete = progress.completed.find(log => log.date === progress.activeDays[1]);
+    chapters.push({
     key: "second-day",
     label: "主线",
     title: "雨痕退寸",
     place: "照微灯廊",
-    text: "当第二日的功课落笔，长廊外的雨幕悄然后退一寸。闻钟觉得：长夜雨畏惧的并非术法，而是人日复一日持守的心意。",
-  });
+    text: `你在另一个日子又完成了「${secondDayComplete ? secondDayComplete.taskName : "一门功课"}」。窗棂上的湿线从下方刻痕退至上方，案沿露出一指干木，灯照也向外铺开。${pathLore.guide}说：长夜雨畏惧的不是术法，是你再次选择持守。`,
+    });
+  }
   if (progress.activeDays.length >= 4) chapters.push({
     key: "steadfast",
     label: "主线",
@@ -1197,12 +1204,16 @@ function maybeShowStoryScene(state) {
   const pathLore = PATH_LORE[state.identity.pathKey];
   const actor = chapter.key === "first-practice" ? "闻钟" : pathLore.guide;
   const portrait = chapter.key === "first-practice" ? "wenzhong" : pathLore.portrait;
+  const overlay = document.getElementById("overlay-story-scene");
   activeStorySceneKey = chapter.key;
   setCharacterPortrait("scene-portrait", portrait, actor);
+  overlay.dataset.scene = chapter.key;
+  overlay.dataset.root = state.identity.rootKey;
   document.getElementById("scene-meta").textContent = `${chapter.label} · ${chapter.place}`;
-  document.getElementById("scene-title").textContent = chapter.title;
+  document.getElementById("scene-title").textContent = chapter.key === "first-practice" ? "首 次 引 气" : chapter.title;
   document.getElementById("scene-text").textContent = chapter.text;
-  document.getElementById("overlay-story-scene").hidden = false;
+  document.body.classList.add("in-story-scene");
+  overlay.hidden = false;
 }
 
 function initStoryScenes() {
@@ -1212,7 +1223,11 @@ function initStoryScenes() {
       saveState();
     }
     activeStorySceneKey = null;
-    document.getElementById("overlay-story-scene").hidden = true;
+    const overlay = document.getElementById("overlay-story-scene");
+    overlay.hidden = true;
+    delete overlay.dataset.scene;
+    delete overlay.dataset.root;
+    document.body.classList.remove("in-story-scene");
     if (currentView === "home") renderHome({ skipPassive: true });
   };
 }
