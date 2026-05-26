@@ -1,17 +1,31 @@
 // 问道 PWA Service Worker
 // 仅缓存静态资源，让 App 完全离线可用
-const CACHE = "wendao-v0.23-qi-preview";
+const CACHE = "wendao-v0.56-initiation-handoff";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=0.23-qi-preview",
-  "./app.js?v=0.23-qi-preview",
+  "./styles.css?v=0.56-initiation-handoff",
+  "./vendor/lunar.js?v=1.7.7",
+  "./app.js?v=0.56-initiation-handoff",
   "./manifest.json",
   "./assets/home-cultivation-base-v2.webp",
   "./assets/home-fashang-qi.webp?v=2",
+  "./assets/home-fashang-foundation.webp?v=1",
+  "./assets/generated/foundation-purple-flame-v1.webp",
+  "./assets/audio/completion-bell.ogg",
+  "./assets/audio/rain.ogg",
+  "./assets/audio/guqin.ogg",
+  "./assets/audio/muyu.ogg",
   "./assets/home-study-scene-v1.webp",
   "./assets/home-body-tempering-v1.webp",
   "./assets/onboarding-mountain-gate-v1.webp",
+  "./assets/mentors/guides-lineup-v1.webp",
+  "./assets/mentors/wenzhong-entrance-v1.webp",
+  "./assets/mentors/wenzhaoshuang-entrance-v1.webp",
+  "./assets/mentors/shibuyan-lantern-entrance-v2.webp",
+  "./assets/mentors/suqinghe-entrance-v1.webp",
+  "./assets/mentors/shenqingjian-entrance-v1.webp",
+  "./assets/mentors/luoheng-entrance-v1.webp",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
 ];
