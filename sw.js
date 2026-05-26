@@ -1,12 +1,12 @@
 // 问道 PWA Service Worker
 // 仅缓存静态资源，让 App 完全离线可用
-const CACHE = "wendao-v0.58-first-qi-rainmark";
+const CACHE = "wendao-v0.56-initiation-handoff";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=0.58-first-qi-rainmark",
+  "./styles.css?v=0.56-initiation-handoff",
   "./vendor/lunar.js?v=1.7.7",
-  "./app.js?v=0.58-first-qi-rainmark",
+  "./app.js?v=0.56-initiation-handoff",
   "./manifest.json",
   "./assets/home-cultivation-base-v2.webp",
   "./assets/home-fashang-qi.webp?v=2",
