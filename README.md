@@ -4,7 +4,7 @@
 
 完成现实中的学习、运动、冥想、长期目标 → 累积修为 → 突破境界 → 从炼气走到飞升。
 
-> v0.2 是**纯自用版**：所有数据保存在你的设备 localStorage，不上传任何服务器、不需要登录。
+> 当前原型以本地优先为原则：核心修行数据保存在设备端；联网、账号、同步等能力按发行阶段和用户授权逐步接入。
 
 ---
 
@@ -12,7 +12,7 @@
 
 - **入门身份**：叩门后登记姓名或称呼，也可先以“无名来者”入山；随后在问心台自选灵根，或在测灵台本地排四柱取日主灵根，再选择道途领受功法
 - **角色面板**：境界 + 修为条 + 连续天数 + 今日修炼分钟
-- **修炼大厅**：可向引路人求法，或手动创建计时 / 数量 / 守约功法；支持主修、每周重复日和拖动调整次序
+- **修炼大厅**：可向引路人求取自定功法，或手动创建计时 / 数量 / 守约功法；联网不可用时保留离线推演
 - **闭关计时**：番茄钟全屏沉浸，以真实时间校准剩余时长，暂停和将满状态更明确；切出 App 自动降为 ×0.8 系数
 - **结算反馈**：闭关结束展示境界进度、破境提示，并可直接继续下一门功课
 - **境界突破**：达到修为门槛自动触发突破动画
@@ -24,7 +24,7 @@
 - **环境回应**：真实修行会改变首页灯火、雨幕、书案与气息光影
 - **世界卷宗与机缘录**：在「无灯长夜」世界中，灵根、道途与真实修行共同推进「未熄之灯」主线
 - **数据导入导出**：JSON 格式备份你的所有数据
-- **PWA**：可"添加到主屏幕"当原生 App 用，完全离线可用
+- **PWA**：可"添加到主屏幕"使用，核心功能支持离线
 
 ## 🏔 修真境界（共 9 阶 34 级）
 
@@ -48,26 +48,29 @@
 
 ## 🚀 怎么用
 
-### 方法 1：本地打开（最快）
-
-直接双击 `index.html` 在浏览器里打开就能用。但 PWA 安装到主屏需要 https，所以推荐方法 2/3。
-
-### 方法 2：用 Python 起个本地服务器
+### 本地预览
 
 ```bash
-cd /path/to/wendao-app
-python3 -m http.server 8000
+python3 -m http.server 8437
 ```
 
-然后浏览器打开 `http://localhost:8000`。
+然后浏览器打开 `http://localhost:8437/`。
 
-### 方法 3：部署到 GitHub Pages（最推荐，免费 + https + 手机随时打开）
+常用检查：
 
-见下方"GitHub 上传指南"。
+```bash
+node --check app.js
+node --check sw.js
+git diff --check
+```
+
+### 安装到手机主屏
+
+PWA 安装需要 HTTPS。部署到任意 HTTPS 静态托管后，再按系统浏览器提示添加到主屏。
 
 ### 📱 添加到 iPhone 主屏
 
-1. 用 Safari 打开 App 网址（GitHub Pages 部署后的链接）
+1. 用 Safari 打开 App 网址
 2. 点底部"分享"按钮 → 选"添加到主屏幕"
 3. 命名为"问道" → 完成
 4. 从此以后从主屏图标打开，全屏无浏览器栏，看起来就是原生 App
@@ -89,80 +92,11 @@ wendao-app/
 ├── app.js            # 全部逻辑
 ├── manifest.json     # PWA 元信息
 ├── sw.js             # Service Worker（离线缓存）
+├── worker/           # 可选联网代理
 └── icons/
     ├── icon-192.png
     └── icon-512.png
 ```
-
-总共 ~60KB，无任何外部依赖。
-
----
-
-## 🛠 GitHub 上传指南
-
-如果你想把这个 App 部署到 GitHub Pages（永久在线 + 免费 + https + 手机随时用），按下面步骤：
-
-### 一次性准备
-
-1. 注册 GitHub 账号（如果还没有）：https://github.com/signup
-2. 安装 Git：
-   - macOS：终端运行 `git --version`，会提示安装；或访问 https://git-scm.com
-   - Windows：https://git-scm.com/download/win
-
-### 创建仓库 + 上传
-
-在 GitHub 网页：
-
-1. 点右上角 `+` → `New repository`
-2. Repository name：`wendao-app`（或你喜欢的名字）
-3. 选 **Public**（这样才能用免费的 GitHub Pages）
-4. 不要勾选 "Add a README"（我们已经有了）
-5. 点 `Create repository`
-
-然后在本地终端（macOS 是 Terminal，Windows 是 PowerShell）：
-
-```bash
-# 进入项目文件夹
-cd /path/to/wendao-app
-
-# 初始化 git
-git init
-git add .
-git commit -m "初版：问道修真自律应用"
-
-# 关联远程仓库（把 YOUR_USERNAME 换成你的 GitHub 用户名）
-git remote add origin https://github.com/YOUR_USERNAME/wendao-app.git
-git branch -M main
-git push -u origin main
-```
-
-第一次 push 会要求登录：用户名输 GitHub 用户名，密码处需要的是 **Personal Access Token**（不是 GitHub 密码）：
-- 生成 token：https://github.com/settings/tokens → Generate new token (classic) → 勾选 `repo` 权限 → 生成
-- 把生成的 token 复制下来当密码用
-
-### 开启 GitHub Pages
-
-1. 进入刚才创建的仓库页面
-2. `Settings` → 左侧 `Pages`
-3. Source 选 `Deploy from a branch`
-4. Branch 选 `main`，文件夹选 `/ (root)`
-5. 点 Save
-6. 等 1–2 分钟，页面顶部会出现网址：`https://YOUR_USERNAME.github.io/wendao-app/`
-
-打开这个网址，加到 iPhone 主屏，开始修炼。
-
-### 以后更新代码
-
-```bash
-cd /path/to/wendao-app
-git add .
-git commit -m "更新：xxx"
-git push
-```
-
-GitHub Pages 会自动重新部署，约 1 分钟后生效。
-
----
 
 ## 🗺 接下来可能加的功能（按优先级）
 
@@ -180,28 +114,19 @@ GitHub Pages 会自动重新部署，约 1 分钟后生效。
 - [x] 测灵台：离线排出完整四柱，仅取日主五行作游戏灵根
 - [ ] 筑基之约、突破文书与环境叙事
 - [x] 剧情系统首卷（听雨山门世界卷宗、人物、未熄之灯主线及行为支线）
-- [ ] AI 引路人联网授法（待设计安全接口、服务接入与用户授权）
-- [ ] 数据云同步（可选，比如 GitHub Gist / iCloud）
+- [x] 引路人聊天与联网授法（用户授权、离线回退）
+- [ ] 账号、同步与公开发行所需的登录策略
 
 完整规划见 [`docs/修行体验蓝图.md`](docs/修行体验蓝图.md)。
 
 ---
 
-## 🧘 设计哲学
+## 🧘 产品原则
 
-**这个 App 不会有的东西**：
-- ❌ 登录注册
-- ❌ 广告
-- ❌ 体力 / 等待时间付费
-- ❌ 开宝箱 / 抽卡
-- ❌ 排行榜竞争（修行是自己的事）
-- ❌ 数据上传服务器
-
-**这个 App 永远会有的东西**：
-- ✓ 断签从不掉境界（最差停在原地）
-- ✓ 完整数据导出，随时迁出
-- ✓ 古意文案，不喊"加油"
-- ✓ 修真世界观下的温柔陪伴
+- 真实行动优先于点击奖励；断签不掉境界。
+- 数据与联网能力采用用户授权、可解释、可迁出的设计。
+- 登录和同步按发行平台要求审慎接入，不预设永久无账号。
+- 古意服务于陪伴感，不牺牲隐私、健康和结算规则的清晰度。
 
 ---
 
