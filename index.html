@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
 <title>问道 · 修真自律</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=0.56-initiation-handoff">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -56,51 +56,203 @@
   <symbol id="i-close" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></symbol>
 </svg>
 
-<!-- ====================== 入门 · 道号生成 ====================== -->
-<section class="view view-onboarding" data-view="onboarding">
-  <div class="onboarding-bg"></div>
+<!-- ====================== 入门 · 留名入册 ====================== -->
+<section class="view view-onboarding prologue-playing" data-view="onboarding">
+  <div class="onboarding-bg" aria-hidden="true"></div>
+  <div class="onboarding-motes" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
   <div class="calligraphy">问<br>道</div>
-  <div class="calligraphy-sub">入 我 仙 门</div>
+  <div class="calligraphy-sub">山 门 初 叩</div>
 
-  <div class="scroll">
-    <div class="scroll-title">— 系统赐汝道号 —</div>
-    <div class="dao-name" id="onb-name">玄 微 子</div>
-    <div class="dao-meta">天罡历 · 入门弟子</div>
+  <button type="button" class="onb-step prologue-step" id="btn-prologue-next">
+    <div class="prologue-era" id="prologue-era"></div>
+    <div class="prologue-copy" id="prologue-copy"></div>
+    <div class="prologue-question" id="prologue-question" hidden>你想成为什么样的人？</div>
+    <span class="prologue-prompt" id="prologue-prompt">轻 触 继 续</span>
+  </button>
+
+  <div class="onb-step keeper-scene" id="onb-step-name" hidden>
+    <div class="keeper-full-art" aria-label="闻钟持灯立于山门雨阶"></div>
+    <div class="keeper-lantern-first" aria-hidden="true"></div>
+    <div class="keeper-dark-veil" aria-hidden="true"></div>
+    <div class="keeper-dialogue" id="keeper-dialogue">
+      <div class="keeper-speaker">闻 钟 <small>守 灯 人</small></div>
+      <div class="keeper-line" id="keeper-line"></div>
+      <button type="button" class="keeper-next" id="btn-keeper-next">轻 触 继 续</button>
+    </div>
+    <div class="keeper-ledger" id="keeper-ledger" hidden>
+      <div class="scroll-title">山 门 录 名</div>
+      <div class="name-ledger-line">闻钟展开灯册：<br>来者，留下你的名字。</div>
+      <div class="dao-meta">听雨山 · 山门候录</div>
+      <input type="text" id="onb-name-input" placeholder="填写姓名或称呼（最多 12 字）" maxlength="12">
+      <button class="btn btn-primary" id="btn-enter">留 名 入 山</button>
+      <button class="btn name-skip" id="btn-anonymous">暂 不 留 名</button>
+    </div>
   </div>
 
-  <input type="text" id="onb-name-input" placeholder="或自定义道号（最多 6 字）" maxlength="6">
+  <div class="onb-step identity-step" id="onb-step-identity" hidden>
+    <button type="button" class="identity-back" id="btn-identity-back">返 回</button>
+    <div class="identity-heading">择 灵 根 · 定 道 途</div>
+    <div class="identity-copy">天赋为引，道途由心。道途不同，际遇自异；然修为深浅，终在己心。</div>
+    <div class="identity-tabs">
+      <button type="button" class="active" data-identity-source="heart">问 心 台</button>
+      <button type="button" data-identity-source="birth">测 灵 台</button>
+    </div>
+    <div id="heart-root-picker" class="root-picker">
+      <button type="button" data-root="wood">青木</button>
+      <button type="button" data-root="fire">赤火</button>
+      <button type="button" data-root="earth">厚土</button>
+      <button type="button" data-root="metal">庚金</button>
+      <button type="button" data-root="water">玄水</button>
+    </div>
+    <div id="birth-root-picker" class="birth-picker" hidden>
+      <label for="onb-birth">出生日期与时刻</label>
+      <input type="datetime-local" id="onb-birth">
+      <button type="button" class="identity-action" id="btn-divine-root">排 出 四 柱</button>
+      <div class="privacy-note">仅在本机计算；不保存原始出生时间，不作现实命理解读。</div>
+      <div class="birth-result" id="birth-result" hidden></div>
+    </div>
+    <div class="path-heading">选择主修道途</div>
+    <div class="path-picker">
+      <button type="button" data-path="sword"><b>剑修</b><small>专注 · 破局</small></button>
+      <button type="button" data-path="body"><b>体修</b><small>体魄 · 坚持</small></button>
+      <button type="button" data-path="alchemy"><b>丹修</b><small>调息 · 养成</small></button>
+      <button type="button" data-path="talisman"><b>符修</b><small>学习 · 创作</small></button>
+      <button type="button" data-path="array"><b>阵修</b><small>规划 · 推演</small></button>
+    </div>
+    <div class="template-preview" id="template-preview">灵根与道途既明，山门将授三卷初法。</div>
+    <button class="btn btn-primary" id="btn-start-cultivation">拜 见 引 路 人</button>
+  </div>
 
-  <button class="btn" id="btn-reroll">换 一 个</button>
-  <button class="btn btn-primary" id="btn-enter">入 山 拜 师</button>
+  <div class="onb-step teaching-step guide-scene" id="onb-step-teaching" data-guide="talisman" hidden>
+    <div class="guide-full-art" id="onb-guide-art" aria-label="沈青简"></div>
+    <div class="guide-aura" aria-hidden="true"></div>
+    <div class="guide-dark-veil" aria-hidden="true"></div>
+    <button type="button" class="identity-back guide-back" id="btn-teaching-back">返 回 择 途</button>
+    <div class="guide-dialogue" id="guide-dialogue">
+      <div class="keeper-speaker"><span id="onb-mentor-name">沈青简</span><small id="onb-mentor-role">藏经灯阁 · 录符执事</small></div>
+      <div class="keeper-line guide-line" id="onb-mentor-dialogue"></div>
+      <button type="button" class="keeper-next" id="btn-guide-next">轻 触 继 续</button>
+    </div>
+    <div class="guide-teaching" id="guide-teaching" hidden>
+      <div class="guide-grant-title">今 日 授 法</div>
+      <div class="teaching-list" id="onb-teaching-list"></div>
+      <button class="btn btn-primary" id="btn-receive-techniques">受 法 入 门</button>
+    </div>
+  </div>
 </section>
 
 <!-- ====================== 主界面 ====================== -->
 <section class="view view-home" data-view="home" hidden>
   <div class="role-panel">
-    <div class="role-name" id="home-name">玄 微 子</div>
-    <div class="role-realm">
-      <span class="realm-badge" id="home-realm">炼气初期</span>
-      <span class="realm-sub" id="home-sub">· 入门 1 日</span>
+    <div class="world-sky" aria-hidden="true">
+      <span class="star star-one"></span>
+      <span class="star star-two"></span>
+      <span class="star star-three"></span>
+      <span class="star star-four"></span>
+      <span class="star star-five"></span>
     </div>
-    <div class="cultivation-bar">
-      <div class="cultivation-fill" id="home-fill"></div>
+
+    <div class="world-topbar">
+      <div class="essence-pill"><span>灵息</span><b id="home-passive-top">2.00</b><small>/时</small></div>
+      <div class="essence-pill"><span>功课</span><b id="home-done-tasks">0</b><small>/</small><b id="home-task-count">3</b></div>
+      <div class="essence-pill"><span>破境尚需</span><b id="home-top-remain">75</b></div>
     </div>
-    <div class="cultivation-text">
-      <span>修为 <b id="home-cult">0</b></span>
-      <span>距下一阶 <b id="home-remain">25</b> ▲</span>
+
+    <div class="realm-vertical" aria-hidden="true">修<br>炼</div>
+
+    <div class="cultivation-world">
+      <div class="world-art" aria-hidden="true"></div>
+      <div class="world-rain" aria-hidden="true"></div>
+      <div class="world-lantern" aria-hidden="true"></div>
+      <div class="world-scroll-glow" aria-hidden="true"></div>
+      <div class="fashang-layer" aria-hidden="true"></div>
+      <div class="foundation-core-flame" aria-hidden="true"></div>
+      <div class="spirit-orbit" aria-hidden="true">
+        <span class="spirit-orb orb-one"></span>
+        <span class="spirit-orb orb-two"></span>
+        <span class="spirit-orb orb-three"></span>
+      </div>
+      <div class="world-mist mist-far" aria-hidden="true"></div>
+      <div class="world-mist mist-near" aria-hidden="true"></div>
+      <div class="spirit-halo" aria-hidden="true"></div>
+      <div class="spirit-stream stream-one" aria-hidden="true"></div>
+      <div class="spirit-stream stream-two" aria-hidden="true"></div>
+      <div class="body-aura" aria-hidden="true"></div>
+      <div class="qi-motes" aria-hidden="true">
+        <span class="mote mote-one"></span>
+        <span class="mote mote-two"></span>
+        <span class="mote mote-three"></span>
+        <span class="mote mote-four"></span>
+        <span class="mote mote-five"></span>
+        <span class="mote mote-six"></span>
+      </div>
+
     </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="home-streak">0</div><div class="stat-label">连续修炼</div></div>
-      <div class="stat"><div class="stat-num" id="home-total">0</div><div class="stat-label">总修炼次</div></div>
-      <div class="stat"><div class="stat-num" id="home-mins">0</div><div class="stat-label">今日分钟</div></div>
+
+    <div class="cultivation-panel">
+      <div class="progress-stage">
+        <span class="realm-badge" id="home-realm">炼气初期</span>
+        <span class="next-realm">突破至 <b id="home-next-realm">炼气中期</b></span>
+      </div>
+      <div class="cultivation-total">
+        <b id="home-cult">0.0</b><span>/</span><em id="home-threshold">75</em>
+      </div>
+      <div class="cultivation-bar">
+        <div class="cultivation-fill" id="home-fill"></div>
+      </div>
+      <div class="speed-row">
+        <span>修炼速度：<b id="home-speed">2.00</b>/小时</span>
+        <span>下次突破：<b id="home-remain">75</b> 修为</span>
+      </div>
+      <div class="daily-forecast" id="home-forecast">完成今日功课，可冲击下一境界</div>
+    </div>
+
+    <div class="cultivation-actions">
+      <button class="world-side-btn" data-go="stats">典籍</button>
+      <button class="breath-btn" id="btn-home-breathe"><strong>吐 纳</strong><small>开始入定</small></button>
+      <button class="world-side-btn" data-go="tasks">功法</button>
+    </div>
+
+    <button type="button" class="demo-entry" id="btn-demo-open">推 演</button>
+    <div class="demo-console" id="demo-console" hidden>
+      <div class="demo-title">破 境 推 演</div>
+      <div class="demo-copy">仅供预览，不会写入实修存档</div>
+      <div class="demo-stage-title">炼气显相预览</div>
+      <div class="demo-stage-grid" aria-label="选择炼气阶段">
+        <button type="button" data-demo-realm-stage="0">初期</button>
+        <button type="button" data-demo-realm-stage="1">中期</button>
+        <button type="button" data-demo-realm-stage="2">后期</button>
+        <button type="button" data-demo-realm-stage="3">圆满</button>
+      </div>
+      <div class="demo-stage-title foundation">筑基显相预览</div>
+      <div class="demo-stage-grid" aria-label="选择筑基阶段">
+        <button type="button" data-demo-realm-stage="4">初期</button>
+        <button type="button" data-demo-realm-stage="5">中期</button>
+        <button type="button" data-demo-realm-stage="6">后期</button>
+        <button type="button" data-demo-realm-stage="7">圆满</button>
+      </div>
+      <button type="button" class="demo-action" id="btn-demo-next">完成下一门功课</button>
+      <div class="demo-links">
+        <button type="button" id="btn-demo-restore">退出推演</button>
+        <button type="button" id="btn-demo-close">收起</button>
+      </div>
     </div>
   </div>
 
   <div class="reminder-card" id="home-reminder">
     <span class="label">道友寄语</span><span id="home-reminder-text">初入仙门，先从一柱香开始吧。</span>
   </div>
-
-  <div class="section-title">
+  <div class="practice-mode-card" id="practice-mode-card">
+    <div>
+      <b id="practice-mode-name">常 行 日</b>
+      <span id="practice-mode-note">今日照常修行，亦可转入养息。</span>
+    </div>
+    <button type="button" id="btn-rest-day">今 日 养 息</button>
+  </div>
+  <div class="story-glimpse" id="story-glimpse" hidden></div>
+  <div class="section-title home-lessons">
     <span>今 日 功 课</span>
     <span class="more" data-go="tasks">查看全部 →</span>
   </div>
@@ -118,9 +270,12 @@
   <div class="header">
     <div>
       <div class="title">修 炼 大 厅</div>
-      <div class="subtitle">选择今日功法，开启闭关</div>
+      <div class="subtitle">排定每周功课，设一门主修</div>
     </div>
-    <div class="add-btn" id="btn-add-task" aria-label="新建功法"><svg class="ui-icon"><use href="#i-plus"></use></svg></div>
+    <div class="task-head-actions">
+      <button type="button" class="ask-guide-btn" id="btn-ask-guide">向引路人求法</button>
+      <div class="add-btn" id="btn-add-task" aria-label="手动新建功法"><svg class="ui-icon"><use href="#i-plus"></use></svg></div>
+    </div>
   </div>
 
   <div id="task-list"></div>
@@ -160,11 +315,33 @@
     </div>
   </div>
 
+  <div class="section-title"><span>世 界 卷 宗</span></div>
+  <div class="world-dossier">
+    <div class="world-dossier-head">
+      <small id="world-era">雨历三百一十七年</small>
+      <b id="world-title">沧溟界 · 听雨山</b>
+      <p id="world-premise"></p>
+    </div>
+    <div class="story-route">
+      <span>当前主线</span>
+      <b id="world-chapter">序章 · 初叩山门</b>
+      <small id="world-place">听雨山 · 问心坪</small>
+      <p id="world-objective"></p>
+    </div>
+    <div class="world-affiliation" id="world-affiliation"></div>
+  </div>
+
+  <div class="section-title"><span>山 门 故 人</span></div>
+  <div class="character-list" id="world-people"></div>
+
   <div class="section-title"><span>近 7 日 修 为</span></div>
   <div class="chart" id="chart-7d"></div>
 
   <div class="section-title"><span>最 近 闭 关 记 录</span></div>
   <div id="log-list"></div>
+
+  <div class="section-title"><span>机 缘 录</span></div>
+  <div id="story-list"></div>
 
   <div style="height:80px"></div>
 </section>
@@ -179,18 +356,42 @@
   </div>
 
   <div class="me-card">
-    <div class="me-row"><span>道号</span><span class="me-val" id="me-name">—</span></div>
+    <div class="me-row"><span>称呼</span><span class="me-val" id="me-name">—</span></div>
     <div class="me-row"><span>境界</span><span class="me-val" id="me-realm">—</span></div>
+    <div class="me-row"><span>灵根</span><span class="me-val" id="me-root">—</span></div>
+    <div class="me-row"><span>道途</span><span class="me-val" id="me-path">—</span></div>
+    <div class="me-row" id="me-pillars-row" hidden><span>命盘</span><span class="me-val" id="me-pillars">—</span></div>
     <div class="me-row"><span>入门日期</span><span class="me-val" id="me-since">—</span></div>
     <div class="me-row"><span>当前修为</span><span class="me-val" id="me-cult">—</span></div>
   </div>
 
   <div class="section-title"><span>道 心</span></div>
   <div class="me-card">
+    <button class="me-btn" id="btn-identity-upgrade" hidden>补定灵根与道途</button>
     <button class="me-btn" id="btn-export">导出修炼日志（JSON）</button>
     <button class="me-btn" id="btn-import">导入日志</button>
     <input type="file" id="import-file" accept=".json" hidden>
     <button class="me-btn me-btn-danger" id="btn-reset">重置（重新入门）</button>
+  </div>
+
+  <div class="section-title"><span>听 雨 闭 关</span></div>
+  <div class="me-card audio-settings">
+    <div class="audio-setting-row">
+      <span>完成铃声</span>
+      <button type="button" class="audio-preview" id="btn-preview-bell">试听铜铃</button>
+    </div>
+    <div class="audio-setting-row audio-picks">
+      <span>背景声景</span>
+      <button type="button" class="audio-preview" data-preview-soundscape="rain">雨声</button>
+      <button type="button" class="audio-preview" data-preview-soundscape="guqin">古琴</button>
+      <button type="button" class="audio-preview" data-preview-soundscape="muyu">木鱼</button>
+    </div>
+    <label class="audio-slider">声景音量 <b id="ambient-volume-label">35%</b>
+      <input type="range" id="ambient-volume" min="0" max="100" step="1" value="35">
+    </label>
+    <label class="audio-slider">铃声音量 <b id="effect-volume-label">60%</b>
+      <input type="range" id="effect-volume" min="0" max="100" step="1" value="60">
+    </label>
   </div>
 
   <div class="footer-text">
@@ -202,42 +403,88 @@
 
 <!-- ====================== 闭关计时（覆盖层） ====================== -->
 <div class="overlay overlay-meditate" id="overlay-meditate" hidden>
-  <div class="meditate-label">闭 关 中</div>
-  <div class="meditate-task" id="med-task">—</div>
-
-  <div class="timer-circle">
-    <svg class="timer-ring" viewBox="0 0 240 240">
-      <circle cx="120" cy="120" r="108" stroke="rgba(201,169,110,0.15)" stroke-width="6" fill="none"/>
-      <circle cx="120" cy="120" r="108" stroke="#C9A96E" stroke-width="6" fill="none"
-        stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"
-        id="med-ring" transform="rotate(-90 120 120)"/>
-    </svg>
-    <div class="timer-inner">
-      <div class="timer-text" id="med-time">25:00</div>
-      <div class="timer-label">剩 余 时 间</div>
-      <div class="timer-realm" id="med-mult"><svg class="inline-icon"><use href="#i-spark"></use></svg>专注 ×1.2</div>
+  <div class="session-stage">
+    <div class="meditate-heading">
+      <div class="meditate-label">入 定 中</div>
+      <div class="meditate-task" id="med-task">—</div>
+      <div class="soundscape" aria-label="闭关声景">
+        <span>声 景</span>
+        <button type="button" data-soundscape="rain">雨声</button>
+        <button type="button" data-soundscape="guqin">古琴</button>
+        <button type="button" data-soundscape="muyu">木鱼</button>
+        <button type="button" data-soundscape="none">寂静</button>
+      </div>
+      <div class="meditate-status" id="med-status">计时已启，离开页面后仍按实际时间收束</div>
     </div>
-  </div>
 
-  <div class="meditate-tips">切出 App 即视为出关<br>修为加成将降为 ×0.8</div>
-  <div class="focus-quote" id="med-quote">"心若不动，万物皆静"</div>
+    <div class="focus-quote" id="med-quote">"心若不动，万物皆静"</div>
 
-  <div class="meditate-actions">
-    <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
-    <div class="icon-btn primary" id="med-toggle"><svg class="ui-icon"><use href="#i-pause"></use></svg></div>
-    <div class="icon-btn" id="med-stop" title="放弃"><svg class="ui-icon"><use href="#i-close"></use></svg></div>
+    <div class="timer-circle">
+      <svg class="timer-ring" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="108" stroke="rgba(201,169,110,0.15)" stroke-width="6" fill="none"/>
+        <circle cx="120" cy="120" r="108" stroke="#C9A96E" stroke-width="6" fill="none"
+          stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"
+          id="med-ring" transform="rotate(-90 120 120)"/>
+      </svg>
+      <div class="timer-inner">
+        <div class="timer-text" id="med-time">25:00</div>
+        <div class="timer-label">剩 余 时 间</div>
+        <div class="timer-realm" id="med-mult"><svg class="inline-icon"><use href="#i-spark"></use></svg>心境澄明 · 修为 ×1.2</div>
+      </div>
+    </div>
+
+    <div class="meditate-tips">切出 App，心神微散 · 修为降为 ×0.8</div>
+
+    <div class="meditate-actions">
+      <div class="icon-btn" id="med-add5" title="加 5 分钟">+5</div>
+      <div class="icon-btn primary" id="med-toggle"><svg class="ui-icon"><use href="#i-pause"></use></svg></div>
+      <div class="icon-btn" id="med-stop" title="提前出关"><svg class="ui-icon"><use href="#i-close"></use></svg></div>
+    </div>
   </div>
 </div>
 
 <!-- ====================== 闭关结算（覆盖层） ====================== -->
 <div class="overlay overlay-result" id="overlay-result" hidden>
-  <div class="result-icon"><svg class="result-mark"><use href="#i-spark"></use></svg></div>
-  <div class="result-title" id="result-title">闭关圆满</div>
-  <div class="result-task" id="result-task">—</div>
-  <div class="result-mins" id="result-mins">— 分钟</div>
-  <div class="result-gain">本次修为 <span id="result-gain">+0</span></div>
-  <div class="result-formula" id="result-formula"></div>
-  <button class="btn btn-primary" id="result-ok">回 主 界 面</button>
+  <div class="result-scene-card">
+    <div class="result-icon"><svg class="result-mark"><use href="#i-spark"></use></svg></div>
+    <div class="result-title" id="result-title">闭关圆满</div>
+    <div class="result-task" id="result-task">—</div>
+    <div class="result-mins" id="result-mins">— 分钟</div>
+    <div class="result-gain">本次修为 <span id="result-gain">+0</span></div>
+    <div class="result-formula" id="result-formula"></div>
+    <div class="result-progress">
+      <div class="result-progress-head">
+        <span id="result-progress-realm">炼气初期</span>
+        <span id="result-progress-value">0 / 75</span>
+      </div>
+      <div class="result-progress-bar"><span id="result-progress-fill"></span></div>
+      <div class="result-next-hint" id="result-next-hint"></div>
+    </div>
+    <button class="btn btn-primary" id="result-ok">收 敛 气 息</button>
+    <button class="btn btn-ghost result-continue" id="result-next" hidden>继 续 下 一 门 功 课</button>
+  </div>
+</div>
+
+<!-- ====================== 数量 / 守约结算 ====================== -->
+<div class="overlay overlay-form" id="overlay-activity" hidden>
+  <div class="form-card activity-card">
+    <div class="form-title" id="activity-title">完 成 功 课</div>
+    <div class="activity-target" id="activity-target"></div>
+    <div class="activity-entry" id="activity-count-entry" hidden>
+      <label>今日实际完成量</label>
+      <div class="quantity-field">
+        <input type="number" id="activity-amount" min="0" step="0.1" placeholder="0">
+        <span id="activity-unit">个</span>
+      </div>
+    </div>
+    <div class="activity-confirm" id="activity-check-confirm" hidden>
+      确认已完成现实中的约定，方可收取修为。
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="activity-cancel">取消</button>
+      <button class="btn btn-primary" id="activity-complete">完 成 并 结 算</button>
+    </div>
+  </div>
 </div>
 
 <!-- ====================== 突破境界（覆盖层） ====================== -->
@@ -251,6 +498,67 @@
   <button class="btn btn-primary" id="break-ok">领 取</button>
 </div>
 
+<!-- ====================== 剧情演出（覆盖层） ====================== -->
+<div class="overlay overlay-story-scene" id="overlay-story-scene" hidden>
+  <div class="scene-portrait character-portrait" id="scene-portrait" data-character="wenzhong" aria-label="闻钟"></div>
+  <div class="scene-meta" id="scene-meta">主 线 · 照微灯廊</div>
+  <div class="scene-title" id="scene-title">灵 根 引 气</div>
+  <div class="scene-text" id="scene-text"></div>
+  <button class="btn btn-primary" id="scene-ok">记 入 灯 册</button>
+</div>
+
+<!-- ====================== 初次受法入室（覆盖层） ====================== -->
+<div class="overlay overlay-initiation" id="overlay-initiation" data-guide="talisman" hidden>
+  <div class="initiation-night" aria-hidden="true"></div>
+  <div class="initiation-rain" aria-hidden="true"></div>
+  <div class="initiation-guiding-light" aria-hidden="true"></div>
+  <div class="initiation-copy initiation-received">
+    <div class="initiation-meta">听 雨 山 · 初 法 入 册</div>
+    <div class="initiation-title">三 卷 初 法</div>
+    <div class="initiation-text">今已刻于心。<br>廊下灯火，将引你往静室。</div>
+    <button class="btn btn-primary" id="btn-initiation-follow">随 灯 入 室</button>
+  </div>
+  <div class="initiation-copy initiation-sanctum">
+    <div class="initiation-meta">听 雨 山 · 静 修 之 所</div>
+    <div class="initiation-title">灯 火 候 行</div>
+    <div class="initiation-text">此处只供敛息候行。<br>真正的第一课，仍待你亲手开始。</div>
+    <button class="btn btn-primary" id="btn-initiation-enter">开 始 今 日 修 行</button>
+  </div>
+</div>
+
+<!-- ====================== 归山引导（覆盖层） ====================== -->
+<div class="overlay overlay-return" id="overlay-return" hidden>
+  <div class="return-portrait character-portrait" data-character="wenzhong" aria-label="闻钟"></div>
+  <div class="return-speaker">闻 钟 · 守 灯 人</div>
+  <div class="return-title">山 门 旧 灯 尚 燃</div>
+  <div class="return-copy">你归来便好。<br>今日，不必急着赶路。先守住一息，灯便会认得你。</div>
+  <button class="btn btn-primary" id="btn-return-intention">先 起 一 念 · 一 分 钟</button>
+  <button class="btn btn-ghost" id="btn-return-enter">先 入 山 看 看</button>
+</div>
+
+<!-- ====================== 引路人求法（覆盖层） ====================== -->
+<div class="overlay overlay-form" id="overlay-mentor" hidden>
+  <div class="form-card mentor-card">
+    <div class="mentor-header">
+      <div class="mentor-avatar character-portrait" id="mentor-avatar" data-character="talisman" aria-label="沈青简"></div>
+      <div>
+        <div class="form-title" id="mentor-title">向 沈 青 简 求 法</div>
+        <div class="mentor-subtitle" id="mentor-subtitle">藏经灯阁 · 录符执事</div>
+      </div>
+    </div>
+    <div class="mentor-speech" id="mentor-prompt">说出你现实中想守住的事情。我会为它取一个可修的名字。</div>
+    <label for="mentor-need">你想修炼什么？</label>
+    <textarea id="mentor-need" placeholder="例如：每天读论文 25 分钟；每周跑步三次；睡前不刷手机"></textarea>
+    <div class="mentor-ai-note">离线授法试作：当前由引路人规则推演；接入 AI 后将由引路人生成更贴合你的功法与解释。</div>
+    <button class="btn btn-primary mentor-consult" id="btn-consult-mentor">请 引 路 人 授 法</button>
+    <div class="mentor-offering" id="mentor-offering" hidden></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="mentor-cancel">告退</button>
+      <button class="btn btn-primary" id="mentor-accept" hidden>领 受 功 法</button>
+    </div>
+  </div>
+</div>
+
 <!-- ====================== 新增任务表单（覆盖层） ====================== -->
 <div class="overlay overlay-form" id="overlay-form" hidden>
   <div class="form-card">
@@ -261,19 +569,34 @@
     <input type="text" id="f-desc" placeholder="例如：冥想 / 学英语 / 写论文" maxlength="40">
     <label>分类</label>
     <div class="form-tabs" id="f-cat-tabs">
-      <div class="form-tab active" data-v="daily">每日打卡</div>
+      <div class="form-tab active" data-v="daily">每日守约</div>
       <div class="form-tab" data-v="study">学习</div>
       <div class="form-tab" data-v="sport">运动</div>
       <div class="form-tab" data-v="meditate">冥想</div>
       <div class="form-tab" data-v="goal">长期目标</div>
     </div>
-    <label>默认时长（分钟）</label>
+    <label>计量方式</label>
+    <div class="form-tabs" id="f-measure-tabs">
+      <button type="button" class="form-tab active" data-v="timer">计时</button>
+      <button type="button" class="form-tab" data-v="count">数量</button>
+      <button type="button" class="form-tab" data-v="checkin">守约</button>
+    </div>
+    <label id="f-duration-label">默认时长（分钟）</label>
     <div class="form-tabs" id="f-dur-tabs">
       <div class="form-tab" data-v="10">10</div>
       <div class="form-tab active" data-v="25">25</div>
+      <div class="form-tab" data-v="30">30</div>
       <div class="form-tab" data-v="45">45</div>
       <div class="form-tab" data-v="60">60</div>
     </div>
+    <div class="quantity-config" id="f-quantity-config" hidden>
+      <label>每日目标数量</label>
+      <div class="quantity-field">
+        <input type="number" id="f-target-value" min="0.1" step="0.1" placeholder="例如：50">
+        <input type="text" id="f-target-unit" placeholder="单位：个 / km / 页" maxlength="8">
+      </div>
+    </div>
+    <div class="measure-note" id="f-measure-note">计时功法按真实闭关时长与专注程度结算。</div>
     <label>难度</label>
     <div class="form-tabs" id="f-diff-tabs">
       <div class="form-tab" data-v="1">易 ×1.0</div>
@@ -281,6 +604,20 @@
       <div class="form-tab" data-v="2.5">难 ×2.5</div>
       <div class="form-tab" data-v="4">极难 ×4.0</div>
     </div>
+    <label>每周安排</label>
+    <div class="form-tabs repeat-tabs" id="f-repeat-tabs" aria-label="选择重复修炼日">
+      <button type="button" class="form-tab" data-v="1">一</button>
+      <button type="button" class="form-tab" data-v="2">二</button>
+      <button type="button" class="form-tab" data-v="3">三</button>
+      <button type="button" class="form-tab" data-v="4">四</button>
+      <button type="button" class="form-tab" data-v="5">五</button>
+      <button type="button" class="form-tab" data-v="6">六</button>
+      <button type="button" class="form-tab" data-v="0">日</button>
+    </div>
+    <label class="primary-toggle">
+      <input type="checkbox" id="f-primary">
+      <span>设为主修功法（首页和今日安排置顶）</span>
+    </label>
     <div class="form-actions">
       <button class="btn btn-ghost" id="f-cancel">取消</button>
       <button class="btn btn-primary" id="f-save">保存</button>
@@ -300,6 +637,7 @@
   <div class="tab" data-go="me"><span class="icon"><svg class="nav-icon"><use href="#i-pavilion"></use></svg></span>我</div>
 </nav>
 
-<script src="app.js"></script>
+<script src="vendor/lunar.js?v=1.7.7"></script>
+<script src="app.js?v=0.56-initiation-handoff"></script>
 </body>
 </html>
